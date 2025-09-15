@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>User.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">chatgemma-backend</a> &gt; <a href="index.source.html" class="el_package">com.chatgemma.entity</a> &gt; <span class="el_source">User.java</span></div><h1>User.java</h1><pre class="source lang-java linenums">package com.chatgemma.entity;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Objects;
+
+@Entity
+@Table(name = &quot;users&quot;, indexes = {
+        @Index(name = &quot;idx_user_username&quot;, columnList = &quot;username&quot;, unique = true),
+        @Index(name = &quot;idx_user_email&quot;, columnList = &quot;email&quot;),
+        @Index(name = &quot;idx_user_status&quot;, columnList = &quot;status&quot;)
+})
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true, nullable = false, length = 50)
+    private String username;
+
+    @Column(nullable = false, length = 255)
+    private String password;
+
+    @Column(nullable = false, length = 100)
+    private String email;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private Role role;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private Status status;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column
+    private LocalDateTime approvedAt;
+
+    @Column
+    private Long approvedBy;
+
+<span class="fc" id="L45">    protected User() {</span>
+        // JPA를 위한 기본 생성자
+<span class="fc" id="L47">    }</span>
+
+<span class="fc" id="L49">    private User(String username, String password, String email, Role role, Status status) {</span>
+<span class="fc" id="L50">        validateRequired(username, &quot;사용자명은 필수입니다&quot;);</span>
+<span class="fc" id="L51">        validateRequired(password, &quot;패스워드는 필수입니다&quot;);</span>
+<span class="fc" id="L52">        validateRequired(email, &quot;이메일은 필수입니다&quot;);</span>
+
+<span class="fc" id="L54">        this.username = username;</span>
+<span class="fc" id="L55">        this.password = password;</span>
+<span class="fc" id="L56">        this.email = email;</span>
+<span class="fc" id="L57">        this.role = role;</span>
+<span class="fc" id="L58">        this.status = status;</span>
+<span class="fc" id="L59">        this.createdAt = LocalDateTime.now();</span>
+
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        if (status == Status.APPROVED) {</span>
+<span class="fc" id="L62">            this.approvedAt = LocalDateTime.now();</span>
+        }
+<span class="fc" id="L64">    }</span>
+
+    public static User createUser(String username, String password, String email) {
+<span class="fc" id="L67">        return new User(username, password, email, Role.USER, Status.PENDING);</span>
+    }
+
+    public static User createAdmin(String username, String password, String email) {
+<span class="fc" id="L71">        return new User(username, password, email, Role.ADMIN, Status.APPROVED);</span>
+    }
+
+    public void approve(Long adminId) {
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        if (this.status != Status.PENDING) {</span>
+<span class="fc" id="L76">            throw new IllegalStateException(&quot;이미 처리된 사용자입니다&quot;);</span>
+        }
+<span class="fc" id="L78">        this.status = Status.APPROVED;</span>
+<span class="fc" id="L79">        this.approvedBy = adminId;</span>
+<span class="fc" id="L80">        this.approvedAt = LocalDateTime.now();</span>
+<span class="fc" id="L81">    }</span>
+
+    public void reject(Long adminId) {
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">        if (this.status != Status.PENDING) {</span>
+<span class="nc" id="L85">            throw new IllegalStateException(&quot;이미 처리된 사용자입니다&quot;);</span>
+        }
+<span class="fc" id="L87">        this.status = Status.REJECTED;</span>
+<span class="fc" id="L88">        this.approvedBy = adminId;</span>
+<span class="fc" id="L89">        this.approvedAt = LocalDateTime.now();</span>
+<span class="fc" id="L90">    }</span>
+
+    public boolean isApproved() {
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        return this.status == Status.APPROVED;</span>
+    }
+
+    public void setRole(Role role) {
+<span class="fc" id="L97">        this.role = role;</span>
+<span class="fc" id="L98">    }</span>
+
+    private void validateRequired(String value, String message) {
+<span class="fc bfc" id="L101" title="All 4 branches covered.">        if (value == null || value.trim().isEmpty()) {</span>
+<span class="fc" id="L102">            throw new IllegalArgumentException(message);</span>
+        }
+<span class="fc" id="L104">    }</span>
+
+    // Getters
+    public Long getId() {
+<span class="fc" id="L108">        return id;</span>
+    }
+
+    public String getUsername() {
+<span class="fc" id="L112">        return username;</span>
+    }
+
+    public String getPassword() {
+<span class="fc" id="L116">        return password;</span>
+    }
+
+    public String getEmail() {
+<span class="fc" id="L120">        return email;</span>
+    }
+
+    public Role getRole() {
+<span class="fc" id="L124">        return role;</span>
+    }
+
+    public Status getStatus() {
+<span class="fc" id="L128">        return status;</span>
+    }
+
+    public LocalDateTime getCreatedAt() {
+<span class="fc" id="L132">        return createdAt;</span>
+    }
+
+    public LocalDateTime getApprovedAt() {
+<span class="fc" id="L136">        return approvedAt;</span>
+    }
+
+    public Long getApprovedBy() {
+<span class="fc" id="L140">        return approvedBy;</span>
+    }
+
+    // Enums
+<span class="fc" id="L144">    public enum Role {</span>
+<span class="fc" id="L145">        USER, ADMIN</span>
+    }
+
+<span class="fc" id="L148">    public enum Status {</span>
+<span class="fc" id="L149">        PENDING, APPROVED, REJECTED</span>
+    }
+
+    @Override
+    public boolean equals(Object o) {
+<span class="pc bpc" id="L154" title="1 of 2 branches missed.">        if (this == o) return true;</span>
+<span class="nc bnc" id="L155" title="All 4 branches missed.">        if (o == null || getClass() != o.getClass()) return false;</span>
+<span class="nc" id="L156">        User user = (User) o;</span>
+<span class="nc" id="L157">        return Objects.equals(username, user.username);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L162">        return Objects.hash(username);</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L167">        return &quot;User{&quot; +</span>
+                &quot;id=&quot; + id +
+                &quot;, username='&quot; + username + '\'' +
+                &quot;, email='&quot; + email + '\'' +
+                &quot;, role=&quot; + role +
+                &quot;, status=&quot; + status +
+                &quot;, createdAt=&quot; + createdAt +
+                '}';
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

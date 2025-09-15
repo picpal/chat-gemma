@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AdminService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">chatgemma-backend</a> &gt; <a href="index.source.html" class="el_package">com.chatgemma.service</a> &gt; <span class="el_source">AdminService.java</span></div><h1>AdminService.java</h1><pre class="source lang-java linenums">package com.chatgemma.service;
+
+import com.chatgemma.entity.AuditLog;
+import com.chatgemma.entity.User;
+import com.chatgemma.entity.User.Role;
+import com.chatgemma.entity.User.Status;
+import com.chatgemma.repository.AuditLogRepository;
+import com.chatgemma.repository.UserRepository;
+import com.chatgemma.service.exception.UnauthorizedAccessException;
+import com.chatgemma.service.exception.UserNotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+@Transactional(readOnly = true)
+public class AdminService {
+
+    private final UserRepository userRepository;
+    private final AuditLogRepository auditLogRepository;
+
+<span class="fc" id="L24">    public AdminService(UserRepository userRepository, AuditLogRepository auditLogRepository) {</span>
+<span class="fc" id="L25">        this.userRepository = userRepository;</span>
+<span class="fc" id="L26">        this.auditLogRepository = auditLogRepository;</span>
+<span class="fc" id="L27">    }</span>
+
+    public List&lt;User&gt; getPendingUsers() {
+<span class="fc" id="L30">        return userRepository.findPendingUsersOrderByCreatedAt();</span>
+    }
+
+    @Transactional
+    public User approveUser(Long adminId, Long targetUserId, String clientIp, String userAgent) {
+        // 관리자 권한 확인
+<span class="fc" id="L36">        User admin = validateAdminAccess(adminId, &quot;APPROVE_USER_ATTEMPT&quot;, clientIp, userAgent);</span>
+
+        // 대상 사용자 조회
+<span class="fc" id="L39">        User targetUser = userRepository.findById(targetUserId)</span>
+<span class="fc" id="L40">                .orElseThrow(() -&gt; new UserNotFoundException(&quot;사용자를 찾을 수 없습니다&quot;));</span>
+
+        // 승인 처리
+<span class="fc" id="L43">        targetUser.approve(adminId);</span>
+<span class="fc" id="L44">        User approvedUser = userRepository.save(targetUser);</span>
+
+        // 감사 로그 기록
+<span class="fc" id="L47">        recordAuditLog(adminId, &quot;APPROVE_USER&quot;, &quot;USER&quot;, targetUserId, clientIp, userAgent,</span>
+<span class="fc" id="L48">                &quot;{\&quot;username\&quot;:\&quot;&quot; + targetUser.getUsername() + &quot;\&quot;}&quot;);</span>
+
+<span class="fc" id="L50">        return approvedUser;</span>
+    }
+
+    @Transactional
+    public User rejectUser(Long adminId, Long targetUserId, String clientIp, String userAgent) {
+        // 관리자 권한 확인
+<span class="fc" id="L56">        User admin = validateAdminAccess(adminId, &quot;REJECT_USER_ATTEMPT&quot;, clientIp, userAgent);</span>
+
+        // 대상 사용자 조회
+<span class="fc" id="L59">        User targetUser = userRepository.findById(targetUserId)</span>
+<span class="pc" id="L60">                .orElseThrow(() -&gt; new UserNotFoundException(&quot;사용자를 찾을 수 없습니다&quot;));</span>
+
+        // 거부 처리
+<span class="fc" id="L63">        targetUser.reject(adminId);</span>
+<span class="fc" id="L64">        User rejectedUser = userRepository.save(targetUser);</span>
+
+        // 감사 로그 기록
+<span class="fc" id="L67">        recordAuditLog(adminId, &quot;REJECT_USER&quot;, &quot;USER&quot;, targetUserId, clientIp, userAgent,</span>
+<span class="fc" id="L68">                &quot;{\&quot;username\&quot;:\&quot;&quot; + targetUser.getUsername() + &quot;\&quot;}&quot;);</span>
+
+<span class="fc" id="L70">        return rejectedUser;</span>
+    }
+
+    @Transactional
+    public User promoteToAdmin(Long adminId, Long targetUserId, String clientIp, String userAgent) {
+        // 관리자 권한 확인
+<span class="fc" id="L76">        User admin = validateAdminAccess(adminId, &quot;PROMOTE_TO_ADMIN_ATTEMPT&quot;, clientIp, userAgent);</span>
+
+        // 대상 사용자 조회
+<span class="fc" id="L79">        User targetUser = userRepository.findById(targetUserId)</span>
+<span class="pc" id="L80">                .orElseThrow(() -&gt; new UserNotFoundException(&quot;사용자를 찾을 수 없습니다&quot;));</span>
+
+        // 승인된 사용자인지 확인
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        if (!targetUser.isApproved()) {</span>
+<span class="fc" id="L84">            throw new IllegalStateException(&quot;승인된 사용자만 관리자로 승격할 수 있습니다&quot;);</span>
+        }
+
+        // 관리자로 승격
+<span class="fc" id="L88">        targetUser.setRole(Role.ADMIN);</span>
+<span class="fc" id="L89">        User promotedUser = userRepository.save(targetUser);</span>
+
+        // 감사 로그 기록
+<span class="fc" id="L92">        recordAuditLog(adminId, &quot;PROMOTE_TO_ADMIN&quot;, &quot;USER&quot;, targetUserId, clientIp, userAgent,</span>
+<span class="fc" id="L93">                &quot;{\&quot;username\&quot;:\&quot;&quot; + targetUser.getUsername() + &quot;\&quot;}&quot;);</span>
+
+<span class="fc" id="L95">        return promotedUser;</span>
+    }
+
+    @Transactional
+    public List&lt;User&gt; bulkApprove(Long adminId, List&lt;Long&gt; userIds, String clientIp, String userAgent) {
+        // 관리자 권한 확인
+<span class="fc" id="L101">        User admin = validateAdminAccess(adminId, &quot;BULK_APPROVE_ATTEMPT&quot;, clientIp, userAgent);</span>
+
+<span class="fc" id="L103">        List&lt;User&gt; approvedUsers = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        for (Long userId : userIds) {</span>
+            try {
+<span class="fc" id="L106">                User user = userRepository.findById(userId)</span>
+<span class="pc" id="L107">                        .orElseThrow(() -&gt; new UserNotFoundException(&quot;사용자를 찾을 수 없습니다: &quot; + userId));</span>
+
+<span class="pc bpc" id="L109" title="1 of 2 branches missed.">                if (user.getStatus() == Status.PENDING) {</span>
+<span class="fc" id="L110">                    user.approve(adminId);</span>
+<span class="fc" id="L111">                    User approved = userRepository.save(user);</span>
+<span class="fc" id="L112">                    approvedUsers.add(approved);</span>
+                }
+<span class="nc" id="L114">            } catch (Exception e) {</span>
+                // 개별 사용자 처리 실패 시 로그만 남기고 계속 진행
+<span class="nc" id="L116">                recordAuditLog(adminId, &quot;BULK_APPROVE_FAILED&quot;, &quot;USER&quot;, userId, clientIp, userAgent,</span>
+<span class="nc" id="L117">                        &quot;{\&quot;error\&quot;:\&quot;&quot; + e.getMessage() + &quot;\&quot;}&quot;);</span>
+<span class="fc" id="L118">            }</span>
+<span class="fc" id="L119">        }</span>
+
+        // 일괄 승인 감사 로그 기록
+<span class="fc" id="L122">        recordAuditLog(adminId, &quot;BULK_APPROVE&quot;, &quot;USER&quot;, null, clientIp, userAgent,</span>
+<span class="fc" id="L123">                &quot;{\&quot;count\&quot;:&quot; + approvedUsers.size() + &quot;,\&quot;total\&quot;:&quot; + userIds.size() + &quot;}&quot;);</span>
+
+<span class="fc" id="L125">        return approvedUsers;</span>
+    }
+
+    public List&lt;User&gt; getAllUsers() {
+<span class="fc" id="L129">        return userRepository.findAll();</span>
+    }
+
+    public List&lt;User&gt; getUsersByStatus(Status status) {
+<span class="fc" id="L133">        return userRepository.findByStatus(status);</span>
+    }
+
+    public List&lt;User&gt; getUsersByRole(Role role) {
+<span class="fc" id="L137">        return userRepository.findByRole(role);</span>
+    }
+
+    public UserStatistics getUserStatistics() {
+<span class="fc" id="L141">        UserStatistics stats = new UserStatistics();</span>
+<span class="fc" id="L142">        stats.totalUsers = userRepository.count();</span>
+<span class="fc" id="L143">        stats.pendingUsers = userRepository.countByStatus(Status.PENDING);</span>
+<span class="fc" id="L144">        stats.approvedUsers = userRepository.countByStatus(Status.APPROVED);</span>
+<span class="fc" id="L145">        stats.rejectedUsers = userRepository.countByStatus(Status.REJECTED);</span>
+<span class="fc" id="L146">        stats.adminCount = userRepository.countByRole(Role.ADMIN);</span>
+<span class="fc" id="L147">        stats.userCount = userRepository.countByRole(Role.USER);</span>
+<span class="fc" id="L148">        return stats;</span>
+    }
+
+    private User validateAdminAccess(Long userId, String attemptAction, String clientIp, String userAgent) {
+<span class="fc" id="L152">        User user = userRepository.findById(userId)</span>
+<span class="pc" id="L153">                .orElseThrow(() -&gt; new UserNotFoundException(&quot;사용자를 찾을 수 없습니다&quot;));</span>
+
+<span class="fc bfc" id="L155" title="All 2 branches covered.">        if (user.getRole() != Role.ADMIN) {</span>
+            // 권한 없는 접근 시도 로깅
+<span class="fc" id="L157">            recordAuditLog(userId, &quot;UNAUTHORIZED_ACCESS&quot;, &quot;ADMIN&quot;, null, clientIp, userAgent,</span>
+                    &quot;{\&quot;attemptedAction\&quot;:\&quot;&quot; + attemptAction + &quot;\&quot;}&quot;);
+<span class="fc" id="L159">            throw new UnauthorizedAccessException(&quot;관리자 권한이 필요합니다&quot;);</span>
+        }
+
+<span class="fc" id="L162">        return user;</span>
+    }
+
+    private void recordAuditLog(Long userId, String action, String resourceType, Long resourceId,
+                               String ipAddress, String userAgent, String details) {
+        AuditLog auditLog;
+<span class="pc bpc" id="L168" title="1 of 2 branches missed.">        if (details != null) {</span>
+<span class="fc" id="L169">            auditLog = AuditLog.createWithDetails(userId, action, resourceType, resourceId,</span>
+                    ipAddress, userAgent, details);
+        } else {
+<span class="nc" id="L172">            auditLog = AuditLog.create(userId, action, resourceType, resourceId, ipAddress, userAgent);</span>
+        }
+<span class="fc" id="L174">        auditLogRepository.save(auditLog);</span>
+<span class="fc" id="L175">    }</span>
+
+<span class="fc" id="L177">    public static class UserStatistics {</span>
+        private long totalUsers;
+        private long pendingUsers;
+        private long approvedUsers;
+        private long rejectedUsers;
+        private long adminCount;
+        private long userCount;
+
+        // Getters
+<span class="fc" id="L186">        public long getTotalUsers() { return totalUsers; }</span>
+<span class="fc" id="L187">        public long getPendingUsers() { return pendingUsers; }</span>
+<span class="fc" id="L188">        public long getApprovedUsers() { return approvedUsers; }</span>
+<span class="fc" id="L189">        public long getRejectedUsers() { return rejectedUsers; }</span>
+<span class="fc" id="L190">        public long getAdminCount() { return adminCount; }</span>
+<span class="fc" id="L191">        public long getUserCount() { return userCount; }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">chatgemma-backend</a> &gt; <a href="index.source.html" class="el_package">com.chatgemma.service</a> &gt; <span class="el_source">AuthService.java</span></div><h1>AuthService.java</h1><pre class="source lang-java linenums">package com.chatgemma.service;
+
+import com.chatgemma.entity.AuditLog;
+import com.chatgemma.entity.User;
+import com.chatgemma.entity.User.Status;
+import com.chatgemma.repository.AuditLogRepository;
+import com.chatgemma.repository.UserRepository;
+import com.chatgemma.service.exception.AuthenticationException;
+import com.chatgemma.service.exception.DuplicateUserException;
+import com.chatgemma.service.exception.UserNotApprovedException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+import java.util.regex.Pattern;
+
+@Service
+@Transactional(readOnly = true)
+public class AuthService {
+
+<span class="fc" id="L22">    private static final Pattern EMAIL_PATTERN = Pattern.compile(</span>
+            &quot;^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$&quot;
+    );
+
+    private final UserRepository userRepository;
+    private final AuditLogRepository auditLogRepository;
+    private final PasswordEncoder passwordEncoder;
+
+<span class="fc" id="L30">    public AuthService(UserRepository userRepository, AuditLogRepository auditLogRepository, PasswordEncoder passwordEncoder) {</span>
+<span class="fc" id="L31">        this.userRepository = userRepository;</span>
+<span class="fc" id="L32">        this.auditLogRepository = auditLogRepository;</span>
+<span class="fc" id="L33">        this.passwordEncoder = passwordEncoder;</span>
+<span class="fc" id="L34">    }</span>
+
+    @Transactional
+    public User register(String username, String password, String email, String clientIp, String userAgent) {
+        // 입력 검증
+<span class="fc" id="L39">        validateRegistrationInput(username, password, email);</span>
+
+        // 중복 확인
+<span class="fc bfc" id="L42" title="All 2 branches covered.">        if (userRepository.existsByUsernameOrEmail(username, email)) {</span>
+<span class="fc" id="L43">            recordAuditLog(null, &quot;REGISTER_FAILED&quot;, &quot;USER&quot;, null, clientIp, userAgent, &quot;DUPLICATE&quot;);</span>
+<span class="fc" id="L44">            throw new DuplicateUserException(&quot;이미 존재하는 사용자명 또는 이메일입니다&quot;);</span>
+        }
+
+        // 패스워드 인코딩 및 사용자 생성
+<span class="fc" id="L48">        String encodedPassword = passwordEncoder.encode(password);</span>
+<span class="fc" id="L49">        User user = User.createUser(username, encodedPassword, email);</span>
+
+        // 저장
+<span class="fc" id="L52">        User savedUser = userRepository.save(user);</span>
+
+        // 감사 로그 기록
+<span class="fc" id="L55">        recordAuditLog(savedUser.getId(), &quot;REGISTER&quot;, &quot;USER&quot;, savedUser.getId(), clientIp, userAgent, null);</span>
+
+<span class="fc" id="L57">        return savedUser;</span>
+    }
+
+    @Transactional
+    public User login(String username, String password, String clientIp, String userAgent) {
+        // 사용자 조회
+<span class="fc" id="L63">        User user = userRepository.findByUsername(username)</span>
+<span class="fc" id="L64">                .orElse(null);</span>
+
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        if (user == null) {</span>
+<span class="fc" id="L67">            recordAuditLog(null, &quot;LOGIN_FAILED&quot;, &quot;USER&quot;, null, clientIp, userAgent, &quot;USER_NOT_FOUND&quot;);</span>
+<span class="fc" id="L68">            throw new AuthenticationException(&quot;사용자명 또는 패스워드가 올바르지 않습니다&quot;);</span>
+        }
+
+        // 패스워드 확인
+<span class="fc bfc" id="L72" title="All 2 branches covered.">        if (!passwordEncoder.matches(password, user.getPassword())) {</span>
+<span class="fc" id="L73">            recordAuditLog(user.getId(), &quot;LOGIN_FAILED&quot;, &quot;USER&quot;, user.getId(), clientIp, userAgent, &quot;INVALID_PASSWORD&quot;);</span>
+<span class="fc" id="L74">            throw new AuthenticationException(&quot;사용자명 또는 패스워드가 올바르지 않습니다&quot;);</span>
+        }
+
+        // 승인 상태 확인
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        if (!user.isApproved()) {</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">            String details = user.getStatus() == Status.REJECTED ? &quot;REJECTED&quot; : &quot;NOT_APPROVED&quot;;</span>
+<span class="fc" id="L80">            recordAuditLog(user.getId(), &quot;LOGIN_FAILED&quot;, &quot;USER&quot;, user.getId(), clientIp, userAgent, details);</span>
+<span class="fc" id="L81">            throw new UserNotApprovedException(&quot;관리자 승인이 필요합니다&quot;);</span>
+        }
+
+        // 성공적인 로그인 기록
+<span class="fc" id="L85">        recordAuditLog(user.getId(), &quot;LOGIN_SUCCESS&quot;, &quot;USER&quot;, user.getId(), clientIp, userAgent, null);</span>
+
+<span class="fc" id="L87">        return user;</span>
+    }
+
+    @Transactional
+    public void logout(Long userId, String clientIp, String userAgent) {
+<span class="fc" id="L92">        recordAuditLog(userId, &quot;LOGOUT&quot;, &quot;USER&quot;, userId, clientIp, userAgent, null);</span>
+<span class="fc" id="L93">    }</span>
+
+    public boolean isUsernameAvailable(String username) {
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        return !userRepository.existsByUsername(username);</span>
+    }
+
+    public boolean isEmailAvailable(String email) {
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        return !userRepository.existsByEmail(email);</span>
+    }
+
+    public Optional&lt;User&gt; getUserById(Long userId) {
+<span class="fc" id="L104">        return userRepository.findById(userId);</span>
+    }
+
+    private void validateRegistrationInput(String username, String password, String email) {
+<span class="pc bpc" id="L108" title="2 of 6 branches missed.">        if (username == null || username.trim().isEmpty() ||</span>
+<span class="pc bpc" id="L109" title="1 of 4 branches missed.">            password == null || password.trim().isEmpty() ||</span>
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">            email == null || email.trim().isEmpty()) {</span>
+<span class="fc" id="L111">            throw new IllegalArgumentException(&quot;필수 입력값이 누락되었습니다&quot;);</span>
+        }
+
+<span class="fc bfc" id="L114" title="All 2 branches covered.">        if (!EMAIL_PATTERN.matcher(email).matches()) {</span>
+<span class="fc" id="L115">            throw new IllegalArgumentException(&quot;유효하지 않은 이메일 형식입니다&quot;);</span>
+        }
+<span class="fc" id="L117">    }</span>
+
+    private void recordAuditLog(Long userId, String action, String resourceType, Long resourceId,
+                               String ipAddress, String userAgent, String details) {
+        AuditLog auditLog;
+<span class="fc bfc" id="L122" title="All 2 branches covered.">        if (details != null) {</span>
+<span class="fc" id="L123">            auditLog = AuditLog.createWithDetails(userId, action, resourceType, resourceId,</span>
+                    ipAddress, userAgent, &quot;{\&quot;reason\&quot;:\&quot;&quot; + details + &quot;\&quot;}&quot;);
+        } else {
+<span class="fc" id="L126">            auditLog = AuditLog.create(userId, action, resourceType, resourceId, ipAddress, userAgent);</span>
+        }
+<span class="fc" id="L128">        auditLogRepository.save(auditLog);</span>
+<span class="fc" id="L129">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

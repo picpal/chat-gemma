@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ChatService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">chatgemma-backend</a> &gt; <a href="index.source.html" class="el_package">com.chatgemma.service</a> &gt; <span class="el_source">ChatService.java</span></div><h1>ChatService.java</h1><pre class="source lang-java linenums">package com.chatgemma.service;
+
+import com.chatgemma.entity.AuditLog;
+import com.chatgemma.entity.Chat;
+import com.chatgemma.entity.Message;
+import com.chatgemma.repository.AuditLogRepository;
+import com.chatgemma.repository.ChatRepository;
+import com.chatgemma.repository.MessageRepository;
+import com.chatgemma.service.exception.ChatNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@Transactional(readOnly = true)
+public class ChatService {
+
+    private final ChatRepository chatRepository;
+    private final MessageRepository messageRepository;
+    private final AuditLogRepository auditLogRepository;
+    private final OllamaService ollamaService;
+
+    public ChatService(ChatRepository chatRepository, MessageRepository messageRepository,
+<span class="fc" id="L27">                      AuditLogRepository auditLogRepository, OllamaService ollamaService) {</span>
+<span class="fc" id="L28">        this.chatRepository = chatRepository;</span>
+<span class="fc" id="L29">        this.messageRepository = messageRepository;</span>
+<span class="fc" id="L30">        this.auditLogRepository = auditLogRepository;</span>
+<span class="fc" id="L31">        this.ollamaService = ollamaService;</span>
+<span class="fc" id="L32">    }</span>
+
+    @Transactional
+    public Chat createChat(Long userId, String title, String clientIp, String userAgent) {
+<span class="fc" id="L36">        validateChatTitle(title);</span>
+
+<span class="fc" id="L38">        Chat chat = Chat.create(userId, title);</span>
+<span class="fc" id="L39">        Chat savedChat = chatRepository.save(chat);</span>
+
+        // 감사 로그 기록
+<span class="fc" id="L42">        recordAuditLog(userId, &quot;CREATE_CHAT&quot;, &quot;CHAT&quot;, savedChat.getId(), clientIp, userAgent, null);</span>
+
+<span class="fc" id="L44">        return savedChat;</span>
+    }
+
+    public List&lt;Chat&gt; getUserActiveChats(Long userId) {
+<span class="fc" id="L48">        return chatRepository.findByUserIdAndDeletedFalseOrderByUpdatedAtDesc(userId);</span>
+    }
+
+    public Page&lt;Chat&gt; getUserActiveChats(Long userId, Pageable pageable) {
+<span class="fc" id="L52">        return chatRepository.findByUserIdAndDeletedFalse(userId, pageable);</span>
+    }
+
+    public Chat getChatByIdAndUserId(Long chatId, Long userId) {
+<span class="fc" id="L56">        return chatRepository.findByIdAndUserIdAndDeletedFalse(chatId, userId)</span>
+<span class="fc" id="L57">                .orElseThrow(() -&gt; new ChatNotFoundException(&quot;채팅을 찾을 수 없습니다&quot;));</span>
+    }
+
+    @Transactional
+    public Chat updateChatTitle(Long chatId, Long userId, String newTitle, String clientIp, String userAgent) {
+<span class="fc" id="L62">        validateChatTitle(newTitle);</span>
+
+<span class="fc" id="L64">        Chat chat = getChatByIdAndUserId(chatId, userId);</span>
+<span class="fc" id="L65">        chat.updateTitle(newTitle);</span>
+<span class="fc" id="L66">        Chat updatedChat = chatRepository.save(chat);</span>
+
+        // 감사 로그 기록
+<span class="fc" id="L69">        recordAuditLog(userId, &quot;UPDATE_CHAT&quot;, &quot;CHAT&quot;, chatId, clientIp, userAgent,</span>
+<span class="fc" id="L70">                &quot;{\&quot;oldTitle\&quot;:\&quot;&quot; + chat.getTitle() + &quot;\&quot;,\&quot;newTitle\&quot;:\&quot;&quot; + newTitle + &quot;\&quot;}&quot;);</span>
+
+<span class="fc" id="L72">        return updatedChat;</span>
+    }
+
+    @Transactional
+    public void deleteChat(Long chatId, Long userId, String clientIp, String userAgent) {
+<span class="fc" id="L77">        Chat chat = getChatByIdAndUserId(chatId, userId);</span>
+<span class="fc" id="L78">        chat.softDelete();</span>
+<span class="fc" id="L79">        chatRepository.save(chat);</span>
+
+        // 감사 로그 기록
+<span class="fc" id="L82">        recordAuditLog(userId, &quot;DELETE_CHAT&quot;, &quot;CHAT&quot;, chatId, clientIp, userAgent, null);</span>
+<span class="fc" id="L83">    }</span>
+
+    @Transactional
+    public Message sendMessage(Long chatId, Long userId, String content, String imageUrl,
+                              String clientIp, String userAgent) {
+        // 입력 검증을 먼저 수행
+<span class="fc" id="L89">        validateMessageContent(content);</span>
+
+        // 채팅 존재 및 권한 확인
+<span class="fc" id="L92">        Chat chat = getChatByIdAndUserId(chatId, userId);</span>
+
+        // 사용자 메시지 저장
+        Message userMessage;
+<span class="pc bpc" id="L96" title="1 of 4 branches missed.">        if (imageUrl != null &amp;&amp; !imageUrl.trim().isEmpty()) {</span>
+<span class="fc" id="L97">            userMessage = Message.createUserMessageWithImage(chatId, content, imageUrl);</span>
+        } else {
+<span class="fc" id="L99">            userMessage = Message.createUserMessage(chatId, content);</span>
+        }
+<span class="fc" id="L101">        Message savedUserMessage = messageRepository.save(userMessage);</span>
+
+        try {
+            // AI 응답 요청
+<span class="fc" id="L105">            String aiResponse = ollamaService.sendMessage(content, imageUrl);</span>
+
+            // AI 응답 메시지 저장
+<span class="fc" id="L108">            Message aiMessage = Message.createAssistantMessage(chatId, aiResponse);</span>
+<span class="fc" id="L109">            messageRepository.save(aiMessage);</span>
+
+            // 감사 로그 기록
+<span class="fc" id="L112">            recordAuditLog(userId, &quot;SEND_MESSAGE&quot;, &quot;MESSAGE&quot;, savedUserMessage.getId(),</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">                    clientIp, userAgent, imageUrl != null ? &quot;{\&quot;hasImage\&quot;:true}&quot; : null);</span>
+
+<span class="fc" id="L115">            return savedUserMessage;</span>
+
+<span class="fc" id="L117">        } catch (Exception e) {</span>
+            // AI 서비스 오류 시에도 사용자 메시지는 저장되어 있음
+<span class="fc" id="L119">            recordAuditLog(userId, &quot;AI_ERROR&quot;, &quot;MESSAGE&quot;, savedUserMessage.getId(),</span>
+<span class="fc" id="L120">                    clientIp, userAgent, &quot;{\&quot;error\&quot;:\&quot;&quot; + e.getMessage() + &quot;\&quot;}&quot;);</span>
+<span class="fc" id="L121">            throw e;</span>
+        }
+    }
+
+    public List&lt;Message&gt; getChatMessages(Long chatId, Long userId) {
+        // 채팅 존재 및 권한 확인
+<span class="fc" id="L127">        getChatByIdAndUserId(chatId, userId);</span>
+<span class="fc" id="L128">        return messageRepository.findByChatIdOrderByCreatedAtAsc(chatId);</span>
+    }
+
+    public Page&lt;Message&gt; getChatMessages(Long chatId, Long userId, Pageable pageable) {
+        // 채팅 존재 및 권한 확인
+<span class="fc" id="L133">        getChatByIdAndUserId(chatId, userId);</span>
+<span class="fc" id="L134">        return messageRepository.findByChatId(chatId, pageable);</span>
+    }
+
+    public List&lt;Chat&gt; searchChats(Long userId, String keyword) {
+<span class="fc" id="L138">        return chatRepository.findByUserIdAndTitleContainingAndDeletedFalse(userId, keyword);</span>
+    }
+
+    public long getUserActiveChatCount(Long userId) {
+<span class="fc" id="L142">        return chatRepository.countByUserIdAndDeletedFalse(userId);</span>
+    }
+
+    private void validateChatTitle(String title) {
+<span class="pc bpc" id="L146" title="1 of 4 branches missed.">        if (title == null || title.trim().isEmpty()) {</span>
+<span class="fc" id="L147">            throw new IllegalArgumentException(&quot;채팅 제목은 필수입니다&quot;);</span>
+        }
+<span class="fc" id="L149">    }</span>
+
+    private void validateMessageContent(String content) {
+<span class="pc bpc" id="L152" title="1 of 4 branches missed.">        if (content == null || content.trim().isEmpty()) {</span>
+<span class="fc" id="L153">            throw new IllegalArgumentException(&quot;메시지 내용은 필수입니다&quot;);</span>
+        }
+<span class="fc" id="L155">    }</span>
+
+    private void recordAuditLog(Long userId, String action, String resourceType, Long resourceId,
+                               String ipAddress, String userAgent, String details) {
+        AuditLog auditLog;
+<span class="fc bfc" id="L160" title="All 2 branches covered.">        if (details != null) {</span>
+<span class="fc" id="L161">            auditLog = AuditLog.createWithDetails(userId, action, resourceType, resourceId,</span>
+                    ipAddress, userAgent, details);
+        } else {
+<span class="fc" id="L164">            auditLog = AuditLog.create(userId, action, resourceType, resourceId, ipAddress, userAgent);</span>
+        }
+<span class="fc" id="L166">        auditLogRepository.save(auditLog);</span>
+<span class="fc" id="L167">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

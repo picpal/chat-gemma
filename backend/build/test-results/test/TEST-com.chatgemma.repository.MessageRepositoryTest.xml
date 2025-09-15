@@ -1,0 +1,1362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Message Repository Tests" tests="14" skipped="0" failures="0" errors="0" timestamp="2025-09-15T13:57:10" hostname="homeui-Macmini.local" time="0.077">
+  <properties/>
+  <testcase name="이미지가 포함된 메시지를 조회할 수 있다" classname="com.chatgemma.repository.MessageRepositoryTest" time="0.005"/>
+  <testcase name="존재하지 않는 키워드로 검색하면 빈 목록을 반환한다" classname="com.chatgemma.repository.MessageRepositoryTest" time="0.004"/>
+  <testcase name="채팅의 첫 번째 메시지를 조회할 수 있다" classname="com.chatgemma.repository.MessageRepositoryTest" time="0.004"/>
+  <testcase name="채팅별 특정 시점 이후의 메시지를 조회할 수 있다" classname="com.chatgemma.repository.MessageRepositoryTest" time="0.004"/>
+  <testcase name="채팅의 최근 메시지를 조회할 수 있다" classname="com.chatgemma.repository.MessageRepositoryTest" time="0.004"/>
+  <testcase name="메시지 내용으로 검색할 수 있다" classname="com.chatgemma.repository.MessageRepositoryTest" time="0.004"/>
+  <testcase name="채팅별 메시지 목록을 시간순으로 조회할 수 있다" classname="com.chatgemma.repository.MessageRepositoryTest" time="0.005"/>
+  <testcase name="어시스턴트 메시지만 조회할 수 있다" classname="com.chatgemma.repository.MessageRepositoryTest" time="0.004"/>
+  <testcase name="사용자 메시지만 조회할 수 있다" classname="com.chatgemma.repository.MessageRepositoryTest" time="0.003"/>
+  <testcase name="채팅별 역할별 메시지 수를 조회할 수 있다" classname="com.chatgemma.repository.MessageRepositoryTest" time="0.004"/>
+  <testcase name="채팅별 메시지 수를 조회할 수 있다" classname="com.chatgemma.repository.MessageRepositoryTest" time="0.005"/>
+  <testcase name="메시지가 없는 채팅의 최근 메시지를 조회하면 null을 반환한다" classname="com.chatgemma.repository.MessageRepositoryTest" time="0.004"/>
+  <testcase name="여러 채팅의 메시지를 한 번에 삭제할 수 있다" classname="com.chatgemma.repository.MessageRepositoryTest" time="0.016"/>
+  <testcase name="채팅별 메시지를 페이지별로 조회할 수 있다" classname="com.chatgemma.repository.MessageRepositoryTest" time="0.006"/>
+  <system-out><![CDATA[2025-09-15T22:57:10.413+09:00  INFO 59153 --- [chatgemma-backend] [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.chatgemma.repository.MessageRepositoryTest]: MessageRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2025-09-15T22:57:10.415+09:00  INFO 59153 --- [chatgemma-backend] [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.chatgemma.ChatGemmaApplication for test class com.chatgemma.repository.MessageRepositoryTest
+2025-09-15T22:57:10.417+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.418+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.418+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.419+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.420+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        m1_0.id,
+        m1_0.chat_id,
+        m1_0.content,
+        m1_0.created_at,
+        m1_0.image_url,
+        m1_0.role 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=? 
+        and m1_0.image_url is not null
+Hibernate: 
+    /* <criteria> */ select
+        m1_0.id,
+        m1_0.chat_id,
+        m1_0.content,
+        m1_0.created_at,
+        m1_0.image_url,
+        m1_0.role 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=? 
+        and m1_0.image_url is not null
+2025-09-15T22:57:10.422+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.423+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.423+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.423+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.424+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        m1_0.id,
+        m1_0.chat_id,
+        m1_0.content,
+        m1_0.created_at,
+        m1_0.image_url,
+        m1_0.role 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=? 
+        and m1_0.content like ? escape '\'
+Hibernate: 
+    /* <criteria> */ select
+        m1_0.id,
+        m1_0.chat_id,
+        m1_0.content,
+        m1_0.created_at,
+        m1_0.image_url,
+        m1_0.role 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=? 
+        and m1_0.content like ? escape '\'
+2025-09-15T22:57:10.427+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.427+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.428+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.428+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.429+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        m1_0.id,
+        m1_0.chat_id,
+        m1_0.content,
+        m1_0.created_at,
+        m1_0.image_url,
+        m1_0.role 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=? 
+    order by
+        m1_0.created_at 
+    fetch
+        first ? rows only
+Hibernate: 
+    /* <criteria> */ select
+        m1_0.id,
+        m1_0.chat_id,
+        m1_0.content,
+        m1_0.created_at,
+        m1_0.image_url,
+        m1_0.role 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=? 
+    order by
+        m1_0.created_at 
+    fetch
+        first ? rows only
+2025-09-15T22:57:10.431+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.432+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.432+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.432+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.433+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        m1_0.id,
+        m1_0.chat_id,
+        m1_0.content,
+        m1_0.created_at,
+        m1_0.image_url,
+        m1_0.role 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=? 
+        and m1_0.created_at>?
+Hibernate: 
+    /* <criteria> */ select
+        m1_0.id,
+        m1_0.chat_id,
+        m1_0.content,
+        m1_0.created_at,
+        m1_0.image_url,
+        m1_0.role 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=? 
+        and m1_0.created_at>?
+2025-09-15T22:57:10.436+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.437+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.437+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.437+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.438+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        m1_0.id,
+        m1_0.chat_id,
+        m1_0.content,
+        m1_0.created_at,
+        m1_0.image_url,
+        m1_0.role 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=? 
+    order by
+        m1_0.created_at desc 
+    fetch
+        first ? rows only
+Hibernate: 
+    /* <criteria> */ select
+        m1_0.id,
+        m1_0.chat_id,
+        m1_0.content,
+        m1_0.created_at,
+        m1_0.image_url,
+        m1_0.role 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=? 
+    order by
+        m1_0.created_at desc 
+    fetch
+        first ? rows only
+2025-09-15T22:57:10.440+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.441+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.441+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.441+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.442+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        m1_0.id,
+        m1_0.chat_id,
+        m1_0.content,
+        m1_0.created_at,
+        m1_0.image_url,
+        m1_0.role 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=? 
+        and m1_0.content like ? escape '\'
+Hibernate: 
+    /* <criteria> */ select
+        m1_0.id,
+        m1_0.chat_id,
+        m1_0.content,
+        m1_0.created_at,
+        m1_0.image_url,
+        m1_0.role 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=? 
+        and m1_0.content like ? escape '\'
+2025-09-15T22:57:10.444+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.445+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.445+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.446+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.447+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        m1_0.id,
+        m1_0.chat_id,
+        m1_0.content,
+        m1_0.created_at,
+        m1_0.image_url,
+        m1_0.role 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=? 
+    order by
+        m1_0.created_at
+Hibernate: 
+    /* <criteria> */ select
+        m1_0.id,
+        m1_0.chat_id,
+        m1_0.content,
+        m1_0.created_at,
+        m1_0.image_url,
+        m1_0.role 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=? 
+    order by
+        m1_0.created_at
+2025-09-15T22:57:10.449+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.450+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.450+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.450+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.451+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        m1_0.id,
+        m1_0.chat_id,
+        m1_0.content,
+        m1_0.created_at,
+        m1_0.image_url,
+        m1_0.role 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=? 
+        and m1_0.role=?
+Hibernate: 
+    /* <criteria> */ select
+        m1_0.id,
+        m1_0.chat_id,
+        m1_0.content,
+        m1_0.created_at,
+        m1_0.image_url,
+        m1_0.role 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=? 
+        and m1_0.role=?
+2025-09-15T22:57:10.454+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.454+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.455+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.455+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.456+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        m1_0.id,
+        m1_0.chat_id,
+        m1_0.content,
+        m1_0.created_at,
+        m1_0.image_url,
+        m1_0.role 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=? 
+        and m1_0.role=?
+Hibernate: 
+    /* <criteria> */ select
+        m1_0.id,
+        m1_0.chat_id,
+        m1_0.content,
+        m1_0.created_at,
+        m1_0.image_url,
+        m1_0.role 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=? 
+        and m1_0.role=?
+2025-09-15T22:57:10.458+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.458+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.459+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.459+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.460+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        count(m1_0.id) 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=? 
+        and m1_0.role=?
+Hibernate: 
+    /* <criteria> */ select
+        count(m1_0.id) 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=? 
+        and m1_0.role=?
+2025-09-15T22:57:10.461+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        count(m1_0.id) 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=? 
+        and m1_0.role=?
+Hibernate: 
+    /* <criteria> */ select
+        count(m1_0.id) 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=? 
+        and m1_0.role=?
+2025-09-15T22:57:10.463+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.463+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.464+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.464+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.465+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        count(m1_0.id) 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=?
+Hibernate: 
+    /* <criteria> */ select
+        count(m1_0.id) 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=?
+2025-09-15T22:57:10.465+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        count(m1_0.id) 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=?
+Hibernate: 
+    /* <criteria> */ select
+        count(m1_0.id) 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=?
+2025-09-15T22:57:10.467+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.468+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.468+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.468+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.469+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        m1_0.id,
+        m1_0.chat_id,
+        m1_0.content,
+        m1_0.created_at,
+        m1_0.image_url,
+        m1_0.role 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=? 
+    order by
+        m1_0.created_at desc 
+    fetch
+        first ? rows only
+Hibernate: 
+    /* <criteria> */ select
+        m1_0.id,
+        m1_0.chat_id,
+        m1_0.content,
+        m1_0.created_at,
+        m1_0.image_url,
+        m1_0.role 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=? 
+    order by
+        m1_0.created_at desc 
+    fetch
+        first ? rows only
+2025-09-15T22:57:10.471+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.472+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.472+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.472+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.477+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* select
+        count(*) 
+    from
+        Message x */ select
+            count(*) 
+        from
+            messages m1_0
+Hibernate: 
+    /* select
+        count(*) 
+    from
+        Message x */ select
+            count(*) 
+        from
+            messages m1_0
+2025-09-15T22:57:10.479+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        m1_0.id,
+        m1_0.chat_id,
+        m1_0.content,
+        m1_0.created_at,
+        m1_0.image_url,
+        m1_0.role 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id in (?, ?)
+Hibernate: 
+    /* <criteria> */ select
+        m1_0.id,
+        m1_0.chat_id,
+        m1_0.content,
+        m1_0.created_at,
+        m1_0.image_url,
+        m1_0.role 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id in (?, ?)
+2025-09-15T22:57:10.483+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* delete for com.chatgemma.entity.Message */delete 
+    from
+        messages 
+    where
+        id=?
+Hibernate: 
+    /* delete for com.chatgemma.entity.Message */delete 
+    from
+        messages 
+    where
+        id=?
+2025-09-15T22:57:10.484+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* delete for com.chatgemma.entity.Message */delete 
+    from
+        messages 
+    where
+        id=?
+Hibernate: 
+    /* delete for com.chatgemma.entity.Message */delete 
+    from
+        messages 
+    where
+        id=?
+2025-09-15T22:57:10.484+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* delete for com.chatgemma.entity.Message */delete 
+    from
+        messages 
+    where
+        id=?
+Hibernate: 
+    /* delete for com.chatgemma.entity.Message */delete 
+    from
+        messages 
+    where
+        id=?
+2025-09-15T22:57:10.485+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* delete for com.chatgemma.entity.Message */delete 
+    from
+        messages 
+    where
+        id=?
+Hibernate: 
+    /* delete for com.chatgemma.entity.Message */delete 
+    from
+        messages 
+    where
+        id=?
+2025-09-15T22:57:10.486+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* select
+        count(*) 
+    from
+        Message x */ select
+            count(*) 
+        from
+            messages m1_0
+Hibernate: 
+    /* select
+        count(*) 
+    from
+        Message x */ select
+            count(*) 
+        from
+            messages m1_0
+2025-09-15T22:57:10.488+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.488+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.489+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.489+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.489+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.490+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.490+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.490+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.490+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.Message */insert 
+    into
+        messages (chat_id, content, created_at, image_url, role, id) 
+    values
+        (?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.491+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        m1_0.id,
+        m1_0.chat_id,
+        m1_0.content,
+        m1_0.created_at,
+        m1_0.image_url,
+        m1_0.role 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=? 
+    fetch
+        first ? rows only
+Hibernate: 
+    /* <criteria> */ select
+        m1_0.id,
+        m1_0.chat_id,
+        m1_0.content,
+        m1_0.created_at,
+        m1_0.image_url,
+        m1_0.role 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=? 
+    fetch
+        first ? rows only
+2025-09-15T22:57:10.492+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        count(m1_0.id) 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=?
+Hibernate: 
+    /* <criteria> */ select
+        count(m1_0.id) 
+    from
+        messages m1_0 
+    where
+        m1_0.chat_id=?
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

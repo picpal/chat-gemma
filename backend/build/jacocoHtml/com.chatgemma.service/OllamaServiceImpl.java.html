@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OllamaServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">chatgemma-backend</a> &gt; <a href="index.source.html" class="el_package">com.chatgemma.service</a> &gt; <span class="el_source">OllamaServiceImpl.java</span></div><h1>OllamaServiceImpl.java</h1><pre class="source lang-java linenums">package com.chatgemma.service;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
+import java.time.Duration;
+
+@Service
+@Primary
+public class OllamaServiceImpl implements OllamaService {
+
+    private final WebClient webClient;
+    private final String modelName;
+    private final int timeoutSeconds;
+
+    public OllamaServiceImpl(WebClient webClient,
+                            @Value(&quot;${chatgemma.ollama.model-name:gemma3n:e4b}&quot;) String modelName,
+<span class="fc" id="L22">                            @Value(&quot;${chatgemma.ollama.timeout:60}&quot;) int timeoutSeconds) {</span>
+<span class="fc" id="L23">        this.webClient = webClient;</span>
+<span class="fc" id="L24">        this.modelName = modelName;</span>
+<span class="fc" id="L25">        this.timeoutSeconds = timeoutSeconds;</span>
+<span class="fc" id="L26">    }</span>
+
+    @Override
+    public String sendMessage(String message, String imageUrl) {
+<span class="fc" id="L30">        validateInput(message);</span>
+
+<span class="fc" id="L32">        String prompt = buildPrompt(message, imageUrl);</span>
+<span class="fc" id="L33">        OllamaRequest request = new OllamaRequest(modelName, prompt);</span>
+
+        try {
+<span class="fc" id="L36">            OllamaResponse response = webClient.post()</span>
+<span class="fc" id="L37">                    .uri(&quot;/api/generate&quot;)</span>
+<span class="fc" id="L38">                    .bodyValue(request)</span>
+<span class="fc" id="L39">                    .retrieve()</span>
+<span class="fc" id="L40">                    .bodyToMono(OllamaResponse.class)</span>
+<span class="fc" id="L41">                    .timeout(Duration.ofSeconds(timeoutSeconds))</span>
+<span class="fc" id="L42">                    .block();</span>
+
+<span class="pc bpc" id="L44" title="2 of 4 branches missed.">            if (response == null || response.getResponse() == null) {</span>
+<span class="nc" id="L45">                throw new RuntimeException(&quot;AI 서비스로부터 응답을 받지 못했습니다&quot;);</span>
+            }
+
+<span class="fc" id="L48">            return response.getResponse();</span>
+<span class="fc" id="L49">        } catch (Exception e) {</span>
+<span class="fc" id="L50">            throw new RuntimeException(&quot;AI 서비스 연결 실패: &quot; + e.getMessage(), e);</span>
+        }
+    }
+
+    private void validateInput(String message) {
+<span class="fc bfc" id="L55" title="All 4 branches covered.">        if (message == null || message.trim().isEmpty()) {</span>
+<span class="fc" id="L56">            throw new IllegalArgumentException(&quot;메시지는 필수입니다&quot;);</span>
+        }
+<span class="fc" id="L58">    }</span>
+
+    private String buildPrompt(String message, String imageUrl) {
+<span class="pc bpc" id="L61" title="1 of 4 branches missed.">        if (imageUrl != null &amp;&amp; !imageUrl.trim().isEmpty()) {</span>
+            // 이미지가 있는 경우 프롬프트에 이미지 컨텍스트 추가
+<span class="fc" id="L63">            return String.format(&quot;이미지 URL: %s\n\n%s&quot;, imageUrl, message);</span>
+        }
+<span class="fc" id="L65">        return message;</span>
+    }
+
+    // Request/Response DTOs
+    static class OllamaRequest {
+        private String model;
+        private String prompt;
+<span class="pc" id="L72">        private boolean stream = false;</span>
+
+<span class="nc" id="L74">        public OllamaRequest() {}</span>
+
+<span class="fc" id="L76">        public OllamaRequest(String model, String prompt) {</span>
+<span class="fc" id="L77">            this.model = model;</span>
+<span class="fc" id="L78">            this.prompt = prompt;</span>
+<span class="fc" id="L79">        }</span>
+
+<span class="fc" id="L81">        public String getModel() { return model; }</span>
+<span class="nc" id="L82">        public void setModel(String model) { this.model = model; }</span>
+
+<span class="fc" id="L84">        public String getPrompt() { return prompt; }</span>
+<span class="nc" id="L85">        public void setPrompt(String prompt) { this.prompt = prompt; }</span>
+
+<span class="fc" id="L87">        public boolean isStream() { return stream; }</span>
+<span class="nc" id="L88">        public void setStream(boolean stream) { this.stream = stream; }</span>
+    }
+
+<span class="fc" id="L91">    static class OllamaResponse {</span>
+        private String model;
+        private String response;
+
+        @JsonProperty(&quot;created_at&quot;)
+        private String createdAt;
+
+        private boolean done;
+
+        @JsonProperty(&quot;eval_count&quot;)
+        private Integer evalCount;
+
+        @JsonProperty(&quot;eval_duration&quot;)
+        private Long evalDuration;
+
+<span class="nc" id="L106">        public String getModel() { return model; }</span>
+<span class="nc" id="L107">        public void setModel(String model) { this.model = model; }</span>
+
+<span class="fc" id="L109">        public String getResponse() { return response; }</span>
+<span class="fc" id="L110">        public void setResponse(String response) { this.response = response; }</span>
+
+<span class="nc" id="L112">        public String getCreatedAt() { return createdAt; }</span>
+<span class="nc" id="L113">        public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }</span>
+
+<span class="nc" id="L115">        public boolean isDone() { return done; }</span>
+<span class="nc" id="L116">        public void setDone(boolean done) { this.done = done; }</span>
+
+<span class="nc" id="L118">        public Integer getEvalCount() { return evalCount; }</span>
+<span class="nc" id="L119">        public void setEvalCount(Integer evalCount) { this.evalCount = evalCount; }</span>
+
+<span class="nc" id="L121">        public Long getEvalDuration() { return evalDuration; }</span>
+<span class="nc" id="L122">        public void setEvalDuration(Long evalDuration) { this.evalDuration = evalDuration; }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

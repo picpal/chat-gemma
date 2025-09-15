@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ChatService Tests" tests="16" skipped="0" failures="0" errors="0" timestamp="2025-09-15T13:57:10" hostname="homeui-Macmini.local" time="0.117">
+  <properties/>
+  <testcase name="채팅에 사용자 메시지를 추가하고 AI 응답을 받을 수 있다" classname="com.chatgemma.service.ChatServiceTest" time="0.092"/>
+  <testcase name="제목으로 채팅을 검색할 수 있다" classname="com.chatgemma.service.ChatServiceTest" time="0.001"/>
+  <testcase name="사용자별 활성 채팅 수를 조회할 수 있다" classname="com.chatgemma.service.ChatServiceTest" time="0.001"/>
+  <testcase name="사용자의 활성 채팅 목록을 조회할 수 있다" classname="com.chatgemma.service.ChatServiceTest" time="0.001"/>
+  <testcase name="이미지가 포함된 메시지를 전송할 수 있다" classname="com.chatgemma.service.ChatServiceTest" time="0.002"/>
+  <testcase name="입력 검증 - null 제목으로 채팅 생성 시 예외가 발생한다" classname="com.chatgemma.service.ChatServiceTest" time="0.001"/>
+  <testcase name="AI 서비스 오류 시 적절히 처리한다" classname="com.chatgemma.service.ChatServiceTest" time="0.006"/>
+  <testcase name="채팅 제목을 업데이트할 수 있다" classname="com.chatgemma.service.ChatServiceTest" time="0.002"/>
+  <testcase name="새 채팅을 생성할 수 있다" classname="com.chatgemma.service.ChatServiceTest" time="0.001"/>
+  <testcase name="채팅 ID와 사용자 ID로 채팅을 조회할 수 있다" classname="com.chatgemma.service.ChatServiceTest" time="0.001"/>
+  <testcase name="존재하지 않는 채팅을 조회하면 예외가 발생한다" classname="com.chatgemma.service.ChatServiceTest" time="0.001"/>
+  <testcase name="채팅의 메시지 목록을 조회할 수 있다" classname="com.chatgemma.service.ChatServiceTest" time="0.001"/>
+  <testcase name="입력 검증 - 빈 메시지 내용으로 전송 시 예외가 발생한다" classname="com.chatgemma.service.ChatServiceTest" time="0.001"/>
+  <testcase name="채팅을 소프트 삭제할 수 있다" classname="com.chatgemma.service.ChatServiceTest" time="0.001"/>
+  <testcase name="채팅의 메시지를 페이지별로 조회할 수 있다" classname="com.chatgemma.service.ChatServiceTest" time="0.001"/>
+  <testcase name="사용자의 활성 채팅을 페이지별로 조회할 수 있다" classname="com.chatgemma.service.ChatServiceTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  gemma3n:
+    image: chatgemma/gemma3n-production:latest
+    container_name: gemma3n-production
+    ports:
+      - "11434:11434"
+    environment:
+      # 기본 설정
+      - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_ORIGINS=*  # ⚠️ 운영 시 특정 도메인으로 제한 필요
+      - OLLAMA_MODELS=/root/.ollama/models
+
+      # 성능 최적화
+      - OLLAMA_NUM_PARALLEL=2
+      - OLLAMA_MAX_LOADED_MODELS=1
+      - OLLAMA_KEEP_ALIVE=10m
+      - OLLAMA_FLASH_ATTENTION=1
+
+      # 로깅
+      - OLLAMA_DEBUG=0
+
+    volumes:
+      # 로그 볼륨 (선택사항)
+      - gemma-logs:/var/log/ollama
+
+    restart: unless-stopped
+
+    # 리소스 제한
+    deploy:
+      resources:
+        limits:
+          memory: 16G          # 최대 메모리 사용량
+          cpus: '4.0'          # 최대 CPU 사용량
+        reservations:
+          memory: 8G           # 최소 메모리 보장
+          cpus: '2.0'          # 최소 CPU 보장
+          # GPU 설정 (사용 가능한 경우)
+          # devices:
+          #   - driver: nvidia
+          #     count: 1
+          #     capabilities: [gpu]
+
+    # 헬스체크
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/health.sh"]
+      interval: 30s           # 30초마다 확인
+      timeout: 15s            # 15초 이내 응답
+      retries: 3              # 3번 실패 시 unhealthy
+      start_period: 60s       # 시작 후 60초 대기
+
+    # 네트워크 설정
+    networks:
+      - gemma-network
+
+    # 보안 설정 (선택사항)
+    # security_opt:
+    #   - no-new-privileges:true
+    # user: "1000:1000"  # non-root 사용자로 실행
+
+    # 로그 설정
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"      # 최대 로그 파일 크기
+        max-file: "5"         # 최대 로그 파일 수
+
+# 볼륨 정의
+volumes:
+  gemma-logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./logs        # 로컬 logs 디렉토리와 바인딩
+
+# 네트워크 정의
+networks:
+  gemma-network:
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1500
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

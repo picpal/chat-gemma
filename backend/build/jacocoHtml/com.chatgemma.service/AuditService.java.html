@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuditService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">chatgemma-backend</a> &gt; <a href="index.source.html" class="el_package">com.chatgemma.service</a> &gt; <span class="el_source">AuditService.java</span></div><h1>AuditService.java</h1><pre class="source lang-java linenums">package com.chatgemma.service;
+
+import com.chatgemma.entity.AuditLog;
+import com.chatgemma.repository.AuditLogRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@Transactional
+public class AuditService {
+
+    private final AuditLogRepository auditLogRepository;
+
+<span class="nc" id="L18">    public AuditService(AuditLogRepository auditLogRepository) {</span>
+<span class="nc" id="L19">        this.auditLogRepository = auditLogRepository;</span>
+<span class="nc" id="L20">    }</span>
+
+    public void logUserAction(Long userId, String action, String resourceType, Long resourceId,
+                            String ipAddress, String userAgent) {
+<span class="nc" id="L24">        AuditLog auditLog = AuditLog.create(userId, action, resourceType, resourceId, ipAddress, userAgent);</span>
+<span class="nc" id="L25">        auditLogRepository.save(auditLog);</span>
+<span class="nc" id="L26">    }</span>
+
+    public void logUserActionWithDetails(Long userId, String action, String resourceType, Long resourceId,
+                                       String ipAddress, String userAgent, String details) {
+<span class="nc" id="L30">        AuditLog auditLog = AuditLog.createWithDetails(userId, action, resourceType, resourceId,</span>
+                                                      ipAddress, userAgent, details);
+<span class="nc" id="L32">        auditLogRepository.save(auditLog);</span>
+<span class="nc" id="L33">    }</span>
+
+    @Transactional(readOnly = true)
+    public List&lt;AuditLog&gt; getAllAuditLogs() {
+<span class="nc" id="L37">        return auditLogRepository.findAll();</span>
+    }
+
+    @Transactional(readOnly = true)
+    public Page&lt;AuditLog&gt; getAuditLogsByUser(Long userId, Pageable pageable) {
+<span class="nc" id="L42">        return auditLogRepository.findByUserId(userId, pageable);</span>
+    }
+
+    @Transactional(readOnly = true)
+    public List&lt;AuditLog&gt; getAuditLogsByAction(String action) {
+<span class="nc" id="L47">        return auditLogRepository.findByAction(action);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

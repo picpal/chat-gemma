@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="AdminService Tests" tests="13" skipped="0" failures="0" errors="0" timestamp="2025-09-15T13:57:10" hostname="homeui-Macmini.local" time="0.29">
+  <properties/>
+  <testcase name="승인되지 않은 사용자를 관리자로 승격시키려고 하면 예외가 발생한다" classname="com.chatgemma.service.AdminServiceTest" time="0.255"/>
+  <testcase name="역할별로 사용자를 조회할 수 있다" classname="com.chatgemma.service.AdminServiceTest" time="0.002"/>
+  <testcase name="일괄 승인 기능이 정상 동작한다" classname="com.chatgemma.service.AdminServiceTest" time="0.01"/>
+  <testcase name="관리자가 아닌 사용자가 승인을 시도하면 예외가 발생한다" classname="com.chatgemma.service.AdminServiceTest" time="0.001"/>
+  <testcase name="관리자가 사용자를 거부할 수 있다" classname="com.chatgemma.service.AdminServiceTest" time="0.002"/>
+  <testcase name="관리자가 사용자를 관리자로 승격시킬 수 있다" classname="com.chatgemma.service.AdminServiceTest" time="0.002"/>
+  <testcase name="관리자가 사용자를 승인할 수 있다" classname="com.chatgemma.service.AdminServiceTest" time="0.003"/>
+  <testcase name="사용자 통계를 조회할 수 있다" classname="com.chatgemma.service.AdminServiceTest" time="0.003"/>
+  <testcase name="관리자가 승인 대기 중인 사용자 목록을 조회할 수 있다" classname="com.chatgemma.service.AdminServiceTest" time="0.002"/>
+  <testcase name="모든 사용자 목록을 조회할 수 있다" classname="com.chatgemma.service.AdminServiceTest" time="0.001"/>
+  <testcase name="이미 승인된 사용자를 다시 승인하려고 하면 예외가 발생한다" classname="com.chatgemma.service.AdminServiceTest" time="0.001"/>
+  <testcase name="존재하지 않는 사용자를 승인하려고 하면 예외가 발생한다" classname="com.chatgemma.service.AdminServiceTest" time="0.002"/>
+  <testcase name="상태별로 사용자를 조회할 수 있다" classname="com.chatgemma.service.AdminServiceTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Message.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">chatgemma-backend</a> &gt; <a href="index.source.html" class="el_package">com.chatgemma.entity</a> &gt; <span class="el_source">Message.java</span></div><h1>Message.java</h1><pre class="source lang-java linenums">package com.chatgemma.entity;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Objects;
+
+@Entity
+@Table(name = &quot;messages&quot;, indexes = {
+        @Index(name = &quot;idx_message_chat_id&quot;, columnList = &quot;chatId&quot;),
+        @Index(name = &quot;idx_message_created_at&quot;, columnList = &quot;createdAt&quot;),
+        @Index(name = &quot;idx_message_role&quot;, columnList = &quot;role&quot;)
+})
+public class Message {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private Long chatId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private Role role;
+
+    @Column(nullable = false, columnDefinition = &quot;TEXT&quot;)
+    private String content;
+
+    @Column(length = 500)
+    private String imageUrl;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+<span class="fc" id="L35">    protected Message() {</span>
+        // JPA를 위한 기본 생성자
+<span class="fc" id="L37">    }</span>
+
+<span class="fc" id="L39">    private Message(Long chatId, Role role, String content, String imageUrl) {</span>
+<span class="fc" id="L40">        validateRequired(chatId, &quot;채팅 ID는 필수입니다&quot;);</span>
+<span class="fc" id="L41">        validateContent(content);</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">        if (imageUrl != null) {</span>
+<span class="fc" id="L43">            validateImageUrl(imageUrl);</span>
+        }
+
+<span class="fc" id="L46">        this.chatId = chatId;</span>
+<span class="fc" id="L47">        this.role = role;</span>
+<span class="fc" id="L48">        this.content = content;</span>
+<span class="fc" id="L49">        this.imageUrl = imageUrl;</span>
+<span class="fc" id="L50">        this.createdAt = LocalDateTime.now();</span>
+<span class="fc" id="L51">    }</span>
+
+    public static Message createUserMessage(Long chatId, String content) {
+<span class="fc" id="L54">        return new Message(chatId, Role.USER, content, null);</span>
+    }
+
+    public static Message createAssistantMessage(Long chatId, String content) {
+<span class="fc" id="L58">        return new Message(chatId, Role.ASSISTANT, content, null);</span>
+    }
+
+    public static Message createUserMessageWithImage(Long chatId, String content, String imageUrl) {
+<span class="fc" id="L62">        validateImageUrl(imageUrl);</span>
+<span class="fc" id="L63">        return new Message(chatId, Role.USER, content, imageUrl);</span>
+    }
+
+    public boolean hasImage() {
+<span class="pc bpc" id="L67" title="1 of 4 branches missed.">        return imageUrl != null &amp;&amp; !imageUrl.trim().isEmpty();</span>
+    }
+
+    public boolean isUserMessage() {
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        return role == Role.USER;</span>
+    }
+
+    public boolean isAssistantMessage() {
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        return role == Role.ASSISTANT;</span>
+    }
+
+    private static void validateRequired(Long value, String message) {
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        if (value == null) {</span>
+<span class="fc" id="L80">            throw new IllegalArgumentException(message);</span>
+        }
+<span class="fc" id="L82">    }</span>
+
+    private static void validateContent(String content) {
+<span class="fc bfc" id="L85" title="All 4 branches covered.">        if (content == null || content.trim().isEmpty()) {</span>
+<span class="fc" id="L86">            throw new IllegalArgumentException(&quot;메시지 내용은 필수입니다&quot;);</span>
+        }
+<span class="fc bfc" id="L88" title="All 2 branches covered.">        if (content.length() &gt; 10000) {</span>
+<span class="fc" id="L89">            throw new IllegalArgumentException(&quot;메시지 내용은 10000자를 초과할 수 없습니다&quot;);</span>
+        }
+<span class="fc" id="L91">    }</span>
+
+    private static void validateImageUrl(String imageUrl) {
+<span class="fc bfc" id="L94" title="All 4 branches covered.">        if (imageUrl == null || imageUrl.trim().isEmpty()) {</span>
+<span class="fc" id="L95">            throw new IllegalArgumentException(&quot;이미지 URL은 필수입니다&quot;);</span>
+        }
+<span class="fc" id="L97">    }</span>
+
+    // Getters
+    public Long getId() {
+<span class="fc" id="L101">        return id;</span>
+    }
+
+    public Long getChatId() {
+<span class="fc" id="L105">        return chatId;</span>
+    }
+
+    public Role getRole() {
+<span class="fc" id="L109">        return role;</span>
+    }
+
+    public String getContent() {
+<span class="fc" id="L113">        return content;</span>
+    }
+
+    public String getImageUrl() {
+<span class="fc" id="L117">        return imageUrl;</span>
+    }
+
+    public LocalDateTime getCreatedAt() {
+<span class="fc" id="L121">        return createdAt;</span>
+    }
+
+    // Enums
+<span class="fc" id="L125">    public enum Role {</span>
+<span class="fc" id="L126">        USER, ASSISTANT</span>
+    }
+
+    @Override
+    public boolean equals(Object o) {
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">        if (this == o) return true;</span>
+<span class="nc bnc" id="L132" title="All 4 branches missed.">        if (o == null || getClass() != o.getClass()) return false;</span>
+<span class="nc" id="L133">        Message message = (Message) o;</span>
+<span class="nc bnc" id="L134" title="All 2 branches missed.">        return Objects.equals(id, message.id) &amp;&amp;</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">               Objects.equals(chatId, message.chatId);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L140">        return Objects.hash(id, chatId);</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L145">        return &quot;Message{&quot; +</span>
+                &quot;id=&quot; + id +
+                &quot;, chatId=&quot; + chatId +
+                &quot;, role=&quot; + role +
+<span class="nc" id="L149">                &quot;, content='&quot; + content.substring(0, Math.min(content.length(), 50)) +</span>
+<span class="nc bnc" id="L150" title="All 2 branches missed.">                (content.length() &gt; 50 ? &quot;...&quot; : &quot;&quot;) + '\'' +</span>
+<span class="nc" id="L151">                &quot;, hasImage=&quot; + hasImage() +</span>
+                &quot;, createdAt=&quot; + createdAt +
+                '}';
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="OllamaServiceImpl Tests" tests="6" skipped="0" failures="0" errors="0" timestamp="2025-09-15T13:57:11" hostname="homeui-Macmini.local" time="60.199">
+  <properties/>
+  <testcase name="null 메시지를 전송하면 예외가 발생한다" classname="com.chatgemma.service.OllamaServiceImplTest" time="0.122"/>
+  <testcase name="이미지가 포함된 메시지를 전송할 수 있다" classname="com.chatgemma.service.OllamaServiceImplTest" time="0.033"/>
+  <testcase name="텍스트 메시지를 전송하고 응답을 받을 수 있다" classname="com.chatgemma.service.OllamaServiceImplTest" time="0.001"/>
+  <testcase name="빈 메시지를 전송하면 예외가 발생한다" classname="com.chatgemma.service.OllamaServiceImplTest" time="0.001"/>
+  <testcase name="타임아웃이 발생하면 예외가 발생한다" classname="com.chatgemma.service.OllamaServiceImplTest" time="60.039"/>
+  <testcase name="AI 서비스 오류 시 적절한 예외가 발생한다" classname="com.chatgemma.service.OllamaServiceImplTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

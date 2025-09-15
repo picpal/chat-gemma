@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuditLog.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">chatgemma-backend</a> &gt; <a href="index.source.html" class="el_package">com.chatgemma.entity</a> &gt; <span class="el_source">AuditLog.java</span></div><h1>AuditLog.java</h1><pre class="source lang-java linenums">package com.chatgemma.entity;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Objects;
+
+@Entity
+@Table(name = &quot;audit_logs&quot;, indexes = {
+        @Index(name = &quot;idx_audit_log_user_id&quot;, columnList = &quot;userId&quot;),
+        @Index(name = &quot;idx_audit_log_action&quot;, columnList = &quot;action&quot;),
+        @Index(name = &quot;idx_audit_log_resource_type&quot;, columnList = &quot;resourceType&quot;),
+        @Index(name = &quot;idx_audit_log_timestamp&quot;, columnList = &quot;timestamp&quot;),
+        @Index(name = &quot;idx_audit_log_ip_address&quot;, columnList = &quot;ipAddress&quot;)
+})
+public class AuditLog {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column
+    private Long userId; // null 허용 (시스템 액션의 경우)
+
+    @Column(nullable = false, length = 50)
+    private String action;
+
+    @Column(nullable = false, length = 50)
+    private String resourceType;
+
+    @Column
+    private Long resourceId; // null 허용 (시스템 레벨 액션의 경우)
+
+    @Column(nullable = false, length = 45)
+    private String ipAddress;
+
+    @Column(nullable = false, length = 500)
+    private String userAgent;
+
+    @Column(nullable = false)
+    private LocalDateTime timestamp;
+
+    @Column(length = 1000)
+    private String details; // JSON 형태의 추가 정보
+
+<span class="fc" id="L45">    protected AuditLog() {</span>
+        // JPA를 위한 기본 생성자
+<span class="fc" id="L47">    }</span>
+
+    private AuditLog(Long userId, String action, String resourceType, Long resourceId,
+<span class="fc" id="L50">                    String ipAddress, String userAgent, String details) {</span>
+<span class="fc" id="L51">        validateAction(action);</span>
+<span class="fc" id="L52">        validateResourceType(resourceType);</span>
+<span class="fc" id="L53">        validateRequired(ipAddress, &quot;IP 주소는 필수입니다&quot;);</span>
+<span class="fc" id="L54">        validateUserAgent(userAgent);</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        if (details != null) {</span>
+<span class="fc" id="L56">            validateDetails(details);</span>
+        }
+
+<span class="fc" id="L59">        this.userId = userId;</span>
+<span class="fc" id="L60">        this.action = action;</span>
+<span class="fc" id="L61">        this.resourceType = resourceType;</span>
+<span class="fc" id="L62">        this.resourceId = resourceId;</span>
+<span class="fc" id="L63">        this.ipAddress = ipAddress;</span>
+<span class="fc" id="L64">        this.userAgent = userAgent;</span>
+<span class="fc" id="L65">        this.details = details;</span>
+<span class="fc" id="L66">        this.timestamp = LocalDateTime.now();</span>
+<span class="fc" id="L67">    }</span>
+
+    public static AuditLog create(Long userId, String action, String resourceType, Long resourceId,
+                                 String ipAddress, String userAgent) {
+<span class="fc" id="L71">        return new AuditLog(userId, action, resourceType, resourceId, ipAddress, userAgent, null);</span>
+    }
+
+    public static AuditLog createWithDetails(Long userId, String action, String resourceType, Long resourceId,
+                                           String ipAddress, String userAgent, String details) {
+<span class="fc" id="L76">        return new AuditLog(userId, action, resourceType, resourceId, ipAddress, userAgent, details);</span>
+    }
+
+    public static AuditLog createSystemLog(String action, String resourceType, String ipAddress, String userAgent) {
+<span class="fc" id="L80">        return new AuditLog(null, action, resourceType, null, ipAddress, userAgent, null);</span>
+    }
+
+    public boolean isSystemLog() {
+<span class="fc bfc" id="L84" title="All 2 branches covered.">        return userId == null;</span>
+    }
+
+    public boolean hasDetails() {
+<span class="pc bpc" id="L88" title="1 of 4 branches missed.">        return details != null &amp;&amp; !details.trim().isEmpty();</span>
+    }
+
+    private void validateRequired(String value, String message) {
+<span class="pc bpc" id="L92" title="1 of 4 branches missed.">        if (value == null || value.trim().isEmpty()) {</span>
+<span class="fc" id="L93">            throw new IllegalArgumentException(message);</span>
+        }
+<span class="fc" id="L95">    }</span>
+
+    private void validateAction(String action) {
+<span class="fc bfc" id="L98" title="All 4 branches covered.">        if (action == null || action.trim().isEmpty()) {</span>
+<span class="fc" id="L99">            throw new IllegalArgumentException(&quot;액션은 필수입니다&quot;);</span>
+        }
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        if (action.length() &gt; 50) {</span>
+<span class="fc" id="L102">            throw new IllegalArgumentException(&quot;액션은 50자를 초과할 수 없습니다&quot;);</span>
+        }
+<span class="fc" id="L104">    }</span>
+
+    private void validateResourceType(String resourceType) {
+<span class="pc bpc" id="L107" title="1 of 4 branches missed.">        if (resourceType == null || resourceType.trim().isEmpty()) {</span>
+<span class="fc" id="L108">            throw new IllegalArgumentException(&quot;리소스 타입은 필수입니다&quot;);</span>
+        }
+<span class="fc bfc" id="L110" title="All 2 branches covered.">        if (resourceType.length() &gt; 50) {</span>
+<span class="fc" id="L111">            throw new IllegalArgumentException(&quot;리소스 타입은 50자를 초과할 수 없습니다&quot;);</span>
+        }
+<span class="fc" id="L113">    }</span>
+
+    private void validateUserAgent(String userAgent) {
+<span class="pc bpc" id="L116" title="1 of 4 branches missed.">        if (userAgent == null || userAgent.trim().isEmpty()) {</span>
+<span class="fc" id="L117">            throw new IllegalArgumentException(&quot;User Agent는 필수입니다&quot;);</span>
+        }
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        if (userAgent.length() &gt; 500) {</span>
+<span class="fc" id="L120">            throw new IllegalArgumentException(&quot;User Agent는 500자를 초과할 수 없습니다&quot;);</span>
+        }
+<span class="fc" id="L122">    }</span>
+
+    private void validateDetails(String details) {
+<span class="fc bfc" id="L125" title="All 2 branches covered.">        if (details.length() &gt; 1000) {</span>
+<span class="fc" id="L126">            throw new IllegalArgumentException(&quot;상세 정보는 1000자를 초과할 수 없습니다&quot;);</span>
+        }
+<span class="fc" id="L128">    }</span>
+
+    // Getters
+    public Long getId() {
+<span class="nc" id="L132">        return id;</span>
+    }
+
+    public Long getUserId() {
+<span class="fc" id="L136">        return userId;</span>
+    }
+
+    public String getAction() {
+<span class="fc" id="L140">        return action;</span>
+    }
+
+    public String getResourceType() {
+<span class="fc" id="L144">        return resourceType;</span>
+    }
+
+    public Long getResourceId() {
+<span class="fc" id="L148">        return resourceId;</span>
+    }
+
+    public String getIpAddress() {
+<span class="fc" id="L152">        return ipAddress;</span>
+    }
+
+    public String getUserAgent() {
+<span class="fc" id="L156">        return userAgent;</span>
+    }
+
+    public LocalDateTime getTimestamp() {
+<span class="fc" id="L160">        return timestamp;</span>
+    }
+
+    public String getDetails() {
+<span class="fc" id="L164">        return details;</span>
+    }
+
+    @Override
+    public boolean equals(Object o) {
+<span class="fc bfc" id="L169" title="All 2 branches covered.">        if (this == o) return true;</span>
+<span class="pc bpc" id="L170" title="2 of 4 branches missed.">        if (o == null || getClass() != o.getClass()) return false;</span>
+<span class="fc" id="L171">        AuditLog auditLog = (AuditLog) o;</span>
+<span class="pc bpc" id="L172" title="1 of 2 branches missed.">        return Objects.equals(id, auditLog.id) &amp;&amp;</span>
+<span class="pc bnc" id="L173" title="All 2 branches missed.">               Objects.equals(timestamp, auditLog.timestamp);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L178">        return Objects.hash(id, timestamp);</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L183">        return &quot;AuditLog{&quot; +</span>
+                &quot;id=&quot; + id +
+                &quot;, userId=&quot; + userId +
+                &quot;, action='&quot; + action + '\'' +
+                &quot;, resourceType='&quot; + resourceType + '\'' +
+                &quot;, resourceId=&quot; + resourceId +
+                &quot;, ipAddress='&quot; + ipAddress + '\'' +
+                &quot;, timestamp=&quot; + timestamp +
+<span class="nc" id="L191">                &quot;, hasDetails=&quot; + hasDetails() +</span>
+                '}';
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

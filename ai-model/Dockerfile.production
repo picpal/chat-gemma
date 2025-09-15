@@ -1,0 +1,54 @@
+# Dockerfile.production
+# 폐쇄망 배포용 - Gemma 3n 모델이 포함된 이미지
+
+FROM ollama/ollama:latest
+
+# 메타데이터
+LABEL maintainer="ChatGemma Team"
+LABEL description="Gemma 3n E4B model with Ollama for offline deployment"
+LABEL version="1.0.0"
+
+# 환경 변수 설정 (운영 최적화)
+ENV OLLAMA_HOST=0.0.0.0
+ENV OLLAMA_ORIGINS=*
+ENV OLLAMA_MODELS=/root/.ollama/models
+ENV OLLAMA_NUM_PARALLEL=2
+ENV OLLAMA_MAX_LOADED_MODELS=1
+ENV OLLAMA_KEEP_ALIVE=10m
+ENV OLLAMA_FLASH_ATTENTION=1
+
+# 필요한 패키지 설치
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        curl \
+        jq \
+        ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+
+# 모델 디렉토리 생성
+RUN mkdir -p /root/.ollama/models
+
+# 모델 파일을 이미지에 직접 포함 (빌드 시 복사됨)
+# 이 부분은 prepare-offline.sh 스크립트에서 처리
+COPY models/ /root/.ollama/models/
+
+# 헬스체크 및 유틸리티 스크립트 복사
+COPY scripts/health.sh /usr/local/bin/health.sh
+COPY scripts/model-check.sh /usr/local/bin/model-check.sh
+
+# 실행 권한 설정
+RUN chmod +x /usr/local/bin/health.sh && \
+    chmod +x /usr/local/bin/model-check.sh
+
+# 모델 무결성 검증
+RUN /usr/local/bin/model-check.sh
+
+# 헬스체크 설정
+HEALTHCHECK --interval=30s --timeout=15s --retries=3 \
+    CMD /usr/local/bin/health.sh || exit 1
+
+# 포트 노출
+EXPOSE 11434
+
+# Ollama 서버 시작
+CMD ["serve"]

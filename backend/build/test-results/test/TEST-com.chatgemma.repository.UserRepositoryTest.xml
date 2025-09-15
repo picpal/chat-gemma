@@ -1,0 +1,1385 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="User Repository Tests" tests="13" skipped="0" failures="0" errors="0" timestamp="2025-09-15T13:57:10" hostname="homeui-Macmini.local" time="0.063">
+  <properties/>
+  <testcase name="사용자명이나 이메일로 사용자 존재 여부를 확인할 수 있다" classname="com.chatgemma.repository.UserRepositoryTest" time="0.007"/>
+  <testcase name="존재하지 않는 사용자명으로 조회하면 빈 Optional을 반환한다" classname="com.chatgemma.repository.UserRepositoryTest" time="0.004"/>
+  <testcase name="상태와 역할로 사용자 목록을 조회할 수 있다" classname="com.chatgemma.repository.UserRepositoryTest" time="0.005"/>
+  <testcase name="활성 사용자 수를 조회할 수 있다" classname="com.chatgemma.repository.UserRepositoryTest" time="0.004"/>
+  <testcase name="사용자명 중복 확인을 할 수 있다" classname="com.chatgemma.repository.UserRepositoryTest" time="0.005"/>
+  <testcase name="역할별로 사용자 목록을 조회할 수 있다" classname="com.chatgemma.repository.UserRepositoryTest" time="0.005"/>
+  <testcase name="사용자명으로 사용자를 찾을 수 있다" classname="com.chatgemma.repository.UserRepositoryTest" time="0.004"/>
+  <testcase name="상태별로 사용자 목록을 조회할 수 있다" classname="com.chatgemma.repository.UserRepositoryTest" time="0.005"/>
+  <testcase name="이메일 중복 확인을 할 수 있다" classname="com.chatgemma.repository.UserRepositoryTest" time="0.005"/>
+  <testcase name="관리자 수를 조회할 수 있다" classname="com.chatgemma.repository.UserRepositoryTest" time="0.005"/>
+  <testcase name="승인이 필요한 사용자 목록을 생성일 순으로 조회할 수 있다" classname="com.chatgemma.repository.UserRepositoryTest" time="0.004"/>
+  <testcase name="존재하지 않는 이메일로 조회하면 빈 Optional을 반환한다" classname="com.chatgemma.repository.UserRepositoryTest" time="0.004"/>
+  <testcase name="이메일로 사용자를 찾을 수 있다" classname="com.chatgemma.repository.UserRepositoryTest" time="0.004"/>
+  <system-out><![CDATA[2025-09-15T22:57:10.494+09:00  INFO 59153 --- [chatgemma-backend] [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.chatgemma.repository.UserRepositoryTest]: UserRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2025-09-15T22:57:10.498+09:00  INFO 59153 --- [chatgemma-backend] [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.chatgemma.ChatGemmaApplication for test class com.chatgemma.repository.UserRepositoryTest
+2025-09-15T22:57:10.500+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.501+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.502+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.502+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.503+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        u1_0.id 
+    from
+        users u1_0 
+    where
+        u1_0.username=? 
+        or u1_0.email=? 
+    fetch
+        first ? rows only
+Hibernate: 
+    /* <criteria> */ select
+        u1_0.id 
+    from
+        users u1_0 
+    where
+        u1_0.username=? 
+        or u1_0.email=? 
+    fetch
+        first ? rows only
+2025-09-15T22:57:10.504+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        u1_0.id 
+    from
+        users u1_0 
+    where
+        u1_0.username=? 
+        or u1_0.email=? 
+    fetch
+        first ? rows only
+Hibernate: 
+    /* <criteria> */ select
+        u1_0.id 
+    from
+        users u1_0 
+    where
+        u1_0.username=? 
+        or u1_0.email=? 
+    fetch
+        first ? rows only
+2025-09-15T22:57:10.505+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        u1_0.id 
+    from
+        users u1_0 
+    where
+        u1_0.username=? 
+        or u1_0.email=? 
+    fetch
+        first ? rows only
+Hibernate: 
+    /* <criteria> */ select
+        u1_0.id 
+    from
+        users u1_0 
+    where
+        u1_0.username=? 
+        or u1_0.email=? 
+    fetch
+        first ? rows only
+2025-09-15T22:57:10.505+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        u1_0.id 
+    from
+        users u1_0 
+    where
+        u1_0.username=? 
+        or u1_0.email=? 
+    fetch
+        first ? rows only
+Hibernate: 
+    /* <criteria> */ select
+        u1_0.id 
+    from
+        users u1_0 
+    where
+        u1_0.username=? 
+        or u1_0.email=? 
+    fetch
+        first ? rows only
+2025-09-15T22:57:10.508+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.509+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.509+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.509+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.510+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.approved_at,
+        u1_0.approved_by,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.role,
+        u1_0.status,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.username=?
+Hibernate: 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.approved_at,
+        u1_0.approved_by,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.role,
+        u1_0.status,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.username=?
+2025-09-15T22:57:10.512+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.513+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.513+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.513+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.514+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.approved_at,
+        u1_0.approved_by,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.role,
+        u1_0.status,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.status=? 
+        and u1_0.role=?
+Hibernate: 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.approved_at,
+        u1_0.approved_by,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.role,
+        u1_0.status,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.status=? 
+        and u1_0.role=?
+2025-09-15T22:57:10.515+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.approved_at,
+        u1_0.approved_by,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.role,
+        u1_0.status,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.status=? 
+        and u1_0.role=?
+Hibernate: 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.approved_at,
+        u1_0.approved_by,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.role,
+        u1_0.status,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.status=? 
+        and u1_0.role=?
+2025-09-15T22:57:10.517+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.518+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.518+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.518+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.519+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* SELECT
+        COUNT(u) 
+    FROM
+        User u 
+    WHERE
+        u.status = 'APPROVED' */ select
+            count(u1_0.id) 
+        from
+            users u1_0 
+        where
+            u1_0.status='APPROVED'
+Hibernate: 
+    /* SELECT
+        COUNT(u) 
+    FROM
+        User u 
+    WHERE
+        u.status = 'APPROVED' */ select
+            count(u1_0.id) 
+        from
+            users u1_0 
+        where
+            u1_0.status='APPROVED'
+2025-09-15T22:57:10.521+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.522+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.522+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.523+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.524+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        u1_0.id 
+    from
+        users u1_0 
+    where
+        u1_0.username=? 
+    fetch
+        first ? rows only
+Hibernate: 
+    /* <criteria> */ select
+        u1_0.id 
+    from
+        users u1_0 
+    where
+        u1_0.username=? 
+    fetch
+        first ? rows only
+2025-09-15T22:57:10.524+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        u1_0.id 
+    from
+        users u1_0 
+    where
+        u1_0.username=? 
+    fetch
+        first ? rows only
+Hibernate: 
+    /* <criteria> */ select
+        u1_0.id 
+    from
+        users u1_0 
+    where
+        u1_0.username=? 
+    fetch
+        first ? rows only
+2025-09-15T22:57:10.525+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        u1_0.id 
+    from
+        users u1_0 
+    where
+        u1_0.username=? 
+    fetch
+        first ? rows only
+Hibernate: 
+    /* <criteria> */ select
+        u1_0.id 
+    from
+        users u1_0 
+    where
+        u1_0.username=? 
+    fetch
+        first ? rows only
+2025-09-15T22:57:10.526+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.527+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.527+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.527+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.528+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.approved_at,
+        u1_0.approved_by,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.role,
+        u1_0.status,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.role=?
+Hibernate: 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.approved_at,
+        u1_0.approved_by,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.role,
+        u1_0.status,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.role=?
+2025-09-15T22:57:10.529+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.approved_at,
+        u1_0.approved_by,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.role,
+        u1_0.status,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.role=?
+Hibernate: 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.approved_at,
+        u1_0.approved_by,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.role,
+        u1_0.status,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.role=?
+2025-09-15T22:57:10.532+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.532+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.532+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.533+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.533+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.approved_at,
+        u1_0.approved_by,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.role,
+        u1_0.status,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.username=?
+Hibernate: 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.approved_at,
+        u1_0.approved_by,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.role,
+        u1_0.status,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.username=?
+2025-09-15T22:57:10.535+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.536+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.536+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.536+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.537+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.approved_at,
+        u1_0.approved_by,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.role,
+        u1_0.status,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.status=?
+Hibernate: 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.approved_at,
+        u1_0.approved_by,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.role,
+        u1_0.status,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.status=?
+2025-09-15T22:57:10.538+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.approved_at,
+        u1_0.approved_by,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.role,
+        u1_0.status,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.status=?
+Hibernate: 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.approved_at,
+        u1_0.approved_by,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.role,
+        u1_0.status,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.status=?
+2025-09-15T22:57:10.538+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.approved_at,
+        u1_0.approved_by,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.role,
+        u1_0.status,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.status=?
+Hibernate: 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.approved_at,
+        u1_0.approved_by,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.role,
+        u1_0.status,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.status=?
+2025-09-15T22:57:10.540+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.541+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.541+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.541+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.542+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        u1_0.id 
+    from
+        users u1_0 
+    where
+        u1_0.email=? 
+    fetch
+        first ? rows only
+Hibernate: 
+    /* <criteria> */ select
+        u1_0.id 
+    from
+        users u1_0 
+    where
+        u1_0.email=? 
+    fetch
+        first ? rows only
+2025-09-15T22:57:10.543+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        u1_0.id 
+    from
+        users u1_0 
+    where
+        u1_0.email=? 
+    fetch
+        first ? rows only
+Hibernate: 
+    /* <criteria> */ select
+        u1_0.id 
+    from
+        users u1_0 
+    where
+        u1_0.email=? 
+    fetch
+        first ? rows only
+2025-09-15T22:57:10.543+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        u1_0.id 
+    from
+        users u1_0 
+    where
+        u1_0.email=? 
+    fetch
+        first ? rows only
+Hibernate: 
+    /* <criteria> */ select
+        u1_0.id 
+    from
+        users u1_0 
+    where
+        u1_0.email=? 
+    fetch
+        first ? rows only
+2025-09-15T22:57:10.545+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.546+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.546+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.546+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.547+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        count(u1_0.id) 
+    from
+        users u1_0 
+    where
+        u1_0.role=?
+Hibernate: 
+    /* <criteria> */ select
+        count(u1_0.id) 
+    from
+        users u1_0 
+    where
+        u1_0.role=?
+2025-09-15T22:57:10.548+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        count(u1_0.id) 
+    from
+        users u1_0 
+    where
+        u1_0.role=?
+Hibernate: 
+    /* <criteria> */ select
+        count(u1_0.id) 
+    from
+        users u1_0 
+    where
+        u1_0.role=?
+2025-09-15T22:57:10.550+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.551+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.551+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.551+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.552+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.552+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* SELECT
+        u 
+    FROM
+        User u 
+    WHERE
+        u.status = 'PENDING' 
+    ORDER BY
+        u.createdAt ASC */ select
+            u1_0.id,
+            u1_0.approved_at,
+            u1_0.approved_by,
+            u1_0.created_at,
+            u1_0.email,
+            u1_0.password,
+            u1_0.role,
+            u1_0.status,
+            u1_0.username 
+        from
+            users u1_0 
+        where
+            u1_0.status='PENDING' 
+        order by
+            u1_0.created_at
+Hibernate: 
+    /* SELECT
+        u 
+    FROM
+        User u 
+    WHERE
+        u.status = 'PENDING' 
+    ORDER BY
+        u.createdAt ASC */ select
+            u1_0.id,
+            u1_0.approved_at,
+            u1_0.approved_by,
+            u1_0.created_at,
+            u1_0.email,
+            u1_0.password,
+            u1_0.role,
+            u1_0.status,
+            u1_0.username 
+        from
+            users u1_0 
+        where
+            u1_0.status='PENDING' 
+        order by
+            u1_0.created_at
+2025-09-15T22:57:10.555+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.556+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.556+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.556+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.557+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.approved_at,
+        u1_0.approved_by,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.role,
+        u1_0.status,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+Hibernate: 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.approved_at,
+        u1_0.approved_by,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.role,
+        u1_0.status,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-09-15T22:57:10.559+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.560+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.560+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.560+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    /* insert for
+        com.chatgemma.entity.User */insert 
+    into
+        users (approved_at, approved_by, created_at, email, password, role, status, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, default)
+2025-09-15T22:57:10.561+09:00 DEBUG 59153 --- [chatgemma-backend] [    Test worker] org.hibernate.SQL                        : 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.approved_at,
+        u1_0.approved_by,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.role,
+        u1_0.status,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+Hibernate: 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.approved_at,
+        u1_0.approved_by,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.role,
+        u1_0.status,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
