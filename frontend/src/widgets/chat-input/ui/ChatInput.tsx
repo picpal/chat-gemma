@@ -18,6 +18,8 @@ export function ChatInput({
   const [message, setMessage] = useState("")
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [isComposing, setIsComposing] = useState(false)
+  const [isSending, setIsSending] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -41,27 +43,42 @@ export function ChatInput({
 
   const handleSend = () => {
     if (!message.trim() && !selectedImage) return
-    if (disabled) return
+    if (disabled || isSending || isComposing) return
 
-    onSendMessage?.(message, selectedImage || undefined)
-    setMessage("")
-    setSelectedImage(null)
-    setImagePreview(null)
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ""
-    }
+    setIsSending(true)
 
-    // Reset textarea height
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto'
+    try {
+      onSendMessage?.(message, selectedImage || undefined)
+      setMessage("")
+      setSelectedImage(null)
+      setImagePreview(null)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""
+      }
+
+      // Reset textarea height
+      if (textareaRef.current) {
+        textareaRef.current.style.height = 'auto'
+      }
+    } finally {
+      // 짧은 지연 후 전송 상태 해제 (중복 방지)
+      setTimeout(() => setIsSending(false), 100)
     }
   }
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
+    if (event.key === 'Enter' && !event.shiftKey && !event.repeat && !isComposing && !isSending) {
       event.preventDefault()
       handleSend()
     }
+  }
+
+  const handleCompositionStart = () => {
+    setIsComposing(true)
+  }
+
+  const handleCompositionEnd = () => {
+    setIsComposing(false)
   }
 
   const handleTextareaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -130,8 +147,10 @@ export function ChatInput({
                 value={message}
                 onChange={handleTextareaChange}
                 onKeyDown={handleKeyDown}
+                onCompositionStart={handleCompositionStart}
+                onCompositionEnd={handleCompositionEnd}
                 placeholder={placeholder}
-                disabled={disabled}
+                disabled={disabled || isSending}
                 className={cn(
                   "w-full resize-none border-0 bg-transparent p-0 text-sm focus:outline-none focus:ring-0",
                   "placeholder:text-muted-foreground",
@@ -143,7 +162,7 @@ export function ChatInput({
 
             <Button
               onClick={handleSend}
-              disabled={disabled || (!message.trim() && !selectedImage)}
+              disabled={disabled || isSending || (!message.trim() && !selectedImage)}
               size="icon"
               className="h-10 w-10 flex-shrink-0"
             >

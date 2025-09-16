@@ -157,22 +157,31 @@ public class ChatService {
 
     // WebSocket용 스트리밍 메시지 처리
     @Transactional
-    public void processMessageStreamAsync(com.chatgemma.dto.request.ChatMessageRequest request,
-                                        String sessionId,
-                                        java.util.function.Consumer<String> chunkConsumer) {
-        java.util.concurrent.CompletableFuture.runAsync(() -> {
+    public java.util.concurrent.CompletableFuture<Void> processMessageStreamAsync(
+            com.chatgemma.dto.request.ChatMessageRequest request,
+            String sessionId,
+            java.util.function.Consumer<String> chunkConsumer) {
+        return java.util.concurrent.CompletableFuture.runAsync(() -> {
             try {
-                // Mock streaming response - 실제로는 Ollama AI 모델과 연동
-                String[] words = {"안녕하세요!", " ", "무엇을", " ", "도와드릴까요?", " ",
-                                 "ChatGemma는", " ", "실시간으로", " ", "응답을", " ", "제공합니다."};
-
-                for (String word : words) {
-                    chunkConsumer.accept(word);
-                    try {
-                        Thread.sleep(200); // 200ms 간격으로 단어별 전송
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        break;
+                // OllamaServiceImpl을 사용한 실제 AI 스트리밍
+                if (ollamaService instanceof OllamaServiceImpl) {
+                    OllamaServiceImpl ollamaImpl = (OllamaServiceImpl) ollamaService;
+                    ollamaImpl.sendMessageStream(request.getContent(), request.getImageUrl(), chunkConsumer);
+                } else {
+                    // 기본 구현체를 사용하는 경우 (fallback)
+                    String response = ollamaService.sendMessage(request.getContent(), request.getImageUrl());
+                    String[] words = response.split("\\s+");
+                    for (int i = 0; i < words.length; i++) {
+                        String word = words[i];
+                        // 마지막 단어가 아닌 경우에만 공백 추가
+                        String chunk = (i == words.length - 1) ? word : word + " ";
+                        chunkConsumer.accept(chunk);
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            break;
+                        }
                     }
                 }
 

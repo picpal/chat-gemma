@@ -21,16 +21,33 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Check if admin user already exists
-        if (!userRepository.existsByEmail("admin@chatgemma.com")) {
-            String encodedPassword = passwordEncoder.encode("admin123");
-            User admin = User.createAdmin("admin", encodedPassword, "admin@chatgemma.com");
+        System.out.println("🚀 [DataInitializer] Starting data initialization...");
 
-            userRepository.save(admin);
-            System.out.println("=== Initial Admin User Created ===");
-            System.out.println("Email: admin@chatgemma.com");
-            System.out.println("Password: admin123");
-            System.out.println("================================");
+        try {
+            // Check if admin user already exists
+            boolean adminExists = userRepository.existsByEmail("admin@chatgemma.com");
+            System.out.println("🔍 [DataInitializer] Admin user exists: " + adminExists);
+
+            if (!adminExists) {
+                System.out.println("🛠️ [DataInitializer] Creating admin user...");
+                String encodedPassword = passwordEncoder.encode("admin123");
+                User admin = User.createAdmin("admin", encodedPassword, "admin@chatgemma.com");
+
+                User savedAdmin = userRepository.save(admin);
+                System.out.println("=== Initial Admin User Created ===");
+                System.out.println("ID: " + savedAdmin.getId());
+                System.out.println("Email: admin@chatgemma.com");
+                System.out.println("Password: admin123");
+                System.out.println("Role: " + savedAdmin.getRole());
+                System.out.println("Status: " + savedAdmin.getStatus());
+                System.out.println("================================");
+            } else {
+                System.out.println("✅ [DataInitializer] Admin user already exists, skipping creation");
+            }
+        } catch (Exception e) {
+            System.err.println("❌ [DataInitializer] Error during initialization: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
         }
     }
 }

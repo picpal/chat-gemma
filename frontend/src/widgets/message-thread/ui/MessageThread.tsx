@@ -3,6 +3,7 @@ import { Avatar } from "@/shared/ui/avatar"
 import { cn } from "@/shared/lib/utils"
 import { Bot, User } from "lucide-react"
 import type { Message } from "@/shared/types/chat"
+import { useEffect, useRef } from "react"
 
 interface MessageThreadProps {
   messages?: Message[]
@@ -15,9 +16,25 @@ export function MessageThread({
   isLoading = false,
   onImageClick,
 }: MessageThreadProps) {
+  const scrollAreaRef = useRef<HTMLDivElement>(null)
+
+  console.log('🎨 [MessageThread] Render with:', {
+    messageCount: messages.length,
+    messages: messages.map(m => ({ id: m.id, role: m.role, content: m.content.substring(0, 30) + '...', isStreaming: m.isStreaming }))
+  })
+
+  useEffect(() => {
+    if (scrollAreaRef.current) {
+      const viewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]')
+      if (viewport) {
+        viewport.scrollTop = viewport.scrollHeight
+      }
+    }
+  }, [messages])
+
   return (
     <div className="flex flex-col h-full">
-      <ScrollArea className="flex-1 p-4">
+      <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
         <div className="max-w-4xl mx-auto space-y-4">
           {messages.map((message) => (
             <div
@@ -55,6 +72,9 @@ export function MessageThread({
                     </div>
                   )}
                   <div className="whitespace-pre-wrap">{message.content}</div>
+                  {message.isStreaming && message.role === 'ASSISTANT' && (
+                    <div className="inline-block w-2 h-4 ml-1 bg-current animate-pulse" />
+                  )}
                 </div>
 
                 <div className={cn(

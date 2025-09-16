@@ -8,6 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
+import java.util.function.Consumer;
 
 @Service
 @Primary
@@ -120,5 +121,29 @@ public class OllamaServiceImpl implements OllamaService {
 
         public Long getEvalDuration() { return evalDuration; }
         public void setEvalDuration(Long evalDuration) { this.evalDuration = evalDuration; }
+    }
+
+    // WebSocket 스트리밍용 메소드
+    public void sendMessageStream(String message, String imageUrl, Consumer<String> chunkConsumer) {
+        try {
+            String fullResponse = sendMessage(message, imageUrl);
+
+            // 응답을 단어별로 나누어 스트리밍 시뮬레이션
+            String[] words = fullResponse.split("\\s+");
+            for (int i = 0; i < words.length; i++) {
+                String word = words[i];
+                // 마지막 단어가 아닌 경우에만 공백 추가
+                String chunk = (i == words.length - 1) ? word : word + " ";
+                chunkConsumer.accept(chunk);
+                try {
+                    Thread.sleep(50); // 50ms 간격으로 단어별 전송
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            chunkConsumer.accept("오류가 발생했습니다: " + e.getMessage());
+        }
     }
 }

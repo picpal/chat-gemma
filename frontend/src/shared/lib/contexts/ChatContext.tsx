@@ -43,6 +43,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [messages, setMessages] = useState<Record<number, Message[]>>({})
   const [isConnected, setIsConnected] = useState(false)
+  const [isSending, setIsSending] = useState(false)
 
   // WebSocket 연결 초기화
   useEffect(() => {
@@ -70,6 +71,15 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     if (!currentChatId || !isConnected) return
 
     const handleMessage = (chatMessage: ChatMessage) => {
+      console.log('🔄 [ChatContext] Received WebSocket message:', {
+        id: chatMessage.id,
+        role: chatMessage.role,
+        content: chatMessage.content,
+        isStreaming: chatMessage.isStreaming,
+        isError: chatMessage.isError,
+        currentChatId
+      })
+
       const message: Message = {
         id: chatMessage.id,
         content: chatMessage.content,
@@ -82,35 +92,83 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
       setMessages(prev => {
         const currentMessages = prev[currentChatId] || []
+        console.log('💬 [ChatContext] Current messages before processing:', currentMessages.length)
 
-        // 스트리밍 메시지인 경우 기존 메시지에 추가하거나 업데이트
-        if (message.isStreaming && message.role === 'ASSISTANT') {
-          const lastMessage = currentMessages[currentMessages.length - 1]
-          if (lastMessage && lastMessage.role === 'ASSISTANT' && lastMessage.isStreaming) {
-            // 기존 스트리밍 메시지에 내용 추가
+        // AI 응답 스트리밍 처리
+        if (message.role === 'ASSISTANT') {
+          console.log('🤖 [ChatContext] Processing ASSISTANT message:', {
+            messageId: message.id,
+            newContent: message.content,
+            isStreaming: message.isStreaming,
+            messagesCount: currentMessages.length
+          })
+
+          // 같은 ID의 기존 메시지를 찾아서 업데이트
+          const existingMessageIndex = currentMessages.findIndex(msg =>
+            msg.id === message.id && msg.role === 'ASSISTANT'
+          )
+
+          if (existingMessageIndex !== -1) {
+            // 기존 메시지가 있으면 업데이트
+            console.log('📝 [ChatContext] Updating existing AI message at index:', existingMessageIndex)
             const updatedMessages = [...currentMessages]
-            updatedMessages[updatedMessages.length - 1] = {
-              ...lastMessage,
-              content: lastMessage.content + message.content
+            const existingMessage = updatedMessages[existingMessageIndex]
+
+            // 스트리밍 완료 신호인 경우 (빈 content + isStreaming=false)
+            if (message.content === '' && !message.isStreaming) {
+              console.log('🏁 [ChatContext] Streaming completion signal received')
+              updatedMessages[existingMessageIndex] = {
+                ...existingMessage,
+                isStreaming: false // 스트리밍 완료 표시
+              }
+            } else {
+              // 일반적인 청크 누적
+              updatedMessages[existingMessageIndex] = {
+                ...existingMessage,
+                content: existingMessage.content + message.content,
+                isStreaming: message.isStreaming,
+                timestamp: message.timestamp
+              }
             }
+
+            console.log('✅ [ChatContext] Updated existing AI message:', updatedMessages[existingMessageIndex].content.substring(0, 50))
+
             return {
               ...prev,
               [currentChatId]: updatedMessages
             }
           } else {
-            // 새로운 스트리밍 메시지 시작
+            // 새로운 AI 응답 시작
+            console.log('🆕 [ChatContext] Creating new AI message with ID:', message.id)
+            const newMessage = { ...message, isStreaming: true }
+
+            return {
+              ...prev,
+              [currentChatId]: [...currentMessages, newMessage]
+            }
+          }
+        } else {
+          // 사용자 메시지는 중복 방지 (이미 sendMessage에서 추가함)
+          console.log('👤 [ChatContext] Processing USER message')
+          const isDuplicate = currentMessages.some(msg =>
+            msg.role === 'USER' &&
+            msg.content === message.content &&
+            Math.abs(new Date(msg.timestamp).getTime() - new Date(message.timestamp).getTime()) < 5000
+          )
+
+          if (!isDuplicate) {
+            console.log('✅ [ChatContext] Adding new USER message')
             return {
               ...prev,
               [currentChatId]: [...currentMessages, message]
             }
-          }
-        } else {
-          // 일반 메시지 추가
-          return {
-            ...prev,
-            [currentChatId]: [...currentMessages, message]
+          } else {
+            console.log('⚠️ [ChatContext] Duplicate USER message ignored')
           }
         }
+
+        console.log('🔄 [ChatContext] No changes made to messages')
+        return prev
       })
     }
 
@@ -176,16 +234,64 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       return
     }
 
+    if (isSending) {
+      console.warn('🚫 [ChatContext] Message sending in progress, ignoring duplicate request')
+      return
+    }
+
+    setIsSending(true)
+    console.log('📤 [ChatContext] Starting message send:', { content, imageUrl, currentChatId })
+
+    // 사용자 메시지를 즉시 UI에 표시
+    const userMessage: Message = {
+      id: Date.now().toString(), // 임시 ID 문자열화로 안정적인 key 보장
+      content,
+      role: 'USER',
+      timestamp: new Date().toISOString(),
+      imageUrl,
+      isStreaming: false,
+      isError: false
+    }
+
+    setMessages(prev => {
+      const currentMessages = prev[currentChatId] || []
+      return {
+        ...prev,
+        [currentChatId]: [...currentMessages, userMessage]
+      }
+    })
+
     const request: ChatMessageRequest = {
-      chatId: currentChatId,
+      chatId: currentChatId.toString(),
       content,
       imageUrl
     }
 
     try {
       webSocketService.sendMessage(request)
+      console.log('✅ [ChatContext] Message sent successfully via WebSocket')
     } catch (error) {
-      console.error('Failed to send message:', error)
+      console.error('❌ [ChatContext] Failed to send message:', error)
+      // 오류 시 사용자 메시지에 오류 표시
+      setMessages(prev => {
+        const currentMessages = prev[currentChatId] || []
+        const updatedMessages = [...currentMessages]
+        const lastMessageIndex = updatedMessages.length - 1
+        if (lastMessageIndex >= 0 && updatedMessages[lastMessageIndex].id === userMessage.id) {
+          updatedMessages[lastMessageIndex] = {
+            ...updatedMessages[lastMessageIndex],
+            isError: true
+          }
+        }
+        return {
+          ...prev,
+          [currentChatId]: updatedMessages
+        }
+      })
+    } finally {
+      // 전송 상태 해제 (성공/실패 관계없이)
+      setIsSending(false)
+      console.log('🔓 [ChatContext] Message sending state reset')
     }
   }
 
@@ -206,7 +312,13 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   }
 
   const getCurrentMessages = (): Message[] => {
-    return currentChatId ? messages[currentChatId] || [] : []
+    const msgs = currentChatId ? messages[currentChatId] || [] : []
+    console.log('📋 [ChatContext] getCurrentMessages called:', {
+      currentChatId,
+      messageCount: msgs.length,
+      messages: msgs.map(m => ({ id: m.id, role: m.role, content: m.content.substring(0, 30) + '...', isStreaming: m.isStreaming }))
+    })
+    return msgs
   }
 
   // 초기 데이터 로드
