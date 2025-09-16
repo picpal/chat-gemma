@@ -69,7 +69,7 @@ export function ChatPage() {
         <div className="flex-1 overflow-hidden">
           <MessageThread
             messages={messages}
-            isLoading={false}
+            isLoading={isAiResponding}
             onImageClick={handleImageClick}
           />
         </div>

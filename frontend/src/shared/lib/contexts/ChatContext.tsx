@@ -132,8 +132,9 @@ export function ChatProvider({ children }: { children: ReactNode }) {
                 isStreaming: message.isStreaming,
                 timestamp: message.timestamp
               }
-              if (!isAiResponding) {
-                setIsAiResponding(true) // AI 응답 시작
+              // AI 응답이 시작되면 로딩 상태 즉시 해제
+              if (isAiResponding) {
+                setIsAiResponding(false)
               }
             }
 
@@ -147,7 +148,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
             // 새로운 AI 응답 시작
             console.log('🆕 [ChatContext] Creating new AI message with ID:', message.id)
             const newMessage = { ...message, isStreaming: true }
-            setIsAiResponding(true) // AI 응답 시작
+            setIsAiResponding(false) // AI 응답 시작 시 로딩 상태 즉시 해제
 
             return {
               ...prev,
@@ -276,9 +277,11 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
     try {
       webSocketService.sendMessage(request)
+      setIsAiResponding(true) // AI 응답 시작
       console.log('✅ [ChatContext] Message sent successfully via WebSocket')
     } catch (error) {
       console.error('❌ [ChatContext] Failed to send message:', error)
+      setIsAiResponding(false) // 오류 시 AI 응답 상태 해제
       // 오류 시 사용자 메시지에 오류 표시
       setMessages(prev => {
         const currentMessages = prev[currentChatId] || []

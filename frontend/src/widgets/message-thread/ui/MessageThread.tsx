@@ -57,14 +57,14 @@ export function MessageThread({
               )}
             >
               {message.role === 'ASSISTANT' && (
-                <Avatar className="h-8 w-8 mt-1">
+                <Avatar className="h-8 w-8 mt-1 flex-shrink-0">
                   <div className="bg-accent text-accent-foreground rounded-full w-full h-full flex items-center justify-center">
                     <Bot className="h-4 w-4" />
                   </div>
                 </Avatar>
               )}
 
-              <div className="flex flex-col max-w-[70%]">
+              <div className="flex flex-col max-w-[70%] mt-0.5">
                 <div
                   className={cn(
                     "rounded-lg px-4 py-2 text-sm",
@@ -88,13 +88,6 @@ export function MessageThread({
                     <div className="inline-block w-2 h-4 ml-1 bg-current animate-pulse" />
                   )}
                 </div>
-
-                <div className={cn(
-                  "text-xs text-muted-foreground mt-1",
-                  message.role === 'USER' ? 'text-right' : 'text-left'
-                )}>
-                  {new Date(message.timestamp).toLocaleTimeString()}
-                </div>
               </div>
 
               {message.role === 'USER' && (
@@ -109,17 +102,21 @@ export function MessageThread({
 
           {isLoading && (
             <div className="flex gap-3 justify-start">
-              <Avatar className="h-8 w-8 mt-1">
+              <Avatar className="h-8 w-8 mt-1 flex-shrink-0">
                 <div className="bg-accent text-accent-foreground rounded-full w-full h-full flex items-center justify-center">
                   <Bot className="h-4 w-4" />
                 </div>
               </Avatar>
 
-              <div className="bg-muted text-foreground rounded-lg px-4 py-2 text-sm">
-                <div className="flex space-x-1">
-                  <div className="animate-pulse">●</div>
-                  <div className="animate-pulse" style={{ animationDelay: '0.2s' }}>●</div>
-                  <div className="animate-pulse" style={{ animationDelay: '0.4s' }}>●</div>
+              <div className="bg-muted text-foreground rounded-lg px-4 py-2 text-sm mt-0.5">
+                <div
+                  className="bg-gradient-to-r from-muted-foreground/30 via-muted-foreground to-muted-foreground/30 bg-clip-text text-transparent"
+                  style={{
+                    backgroundSize: '200% 100%',
+                    animation: 'shimmer 2s ease-in-out infinite'
+                  }}
+                >
+                  답변을 위해 생각중...
                 </div>
               </div>
             </div>

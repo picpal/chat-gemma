@@ -193,17 +193,9 @@ export function ChatSidebar({ user }: ChatSidebarProps) {
                     </Button>
                   </div>
                 ) : (
-                  <>
-                    <div className="text-sm font-medium truncate text-foreground/90 cursor-pointer">
-                      {chat.title}
-                    </div>
-                    <div className="text-xs text-muted-foreground/60">
-                      {new Date(chat.updatedAt).toLocaleDateString('ko-KR', {
-                        month: 'short',
-                        day: 'numeric'
-                      })}
-                    </div>
-                  </>
+                  <div className="text-sm font-medium truncate text-foreground/90 cursor-pointer">
+                    {chat.title}
+                  </div>
                 )}
               </div>
               {editingChatId !== chat.id && (
