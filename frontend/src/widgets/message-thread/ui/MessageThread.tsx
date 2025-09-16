@@ -23,17 +23,29 @@ export function MessageThread({
     messages: messages.map(m => ({ id: m.id, role: m.role, content: m.content.substring(0, 30) + '...', isStreaming: m.isStreaming }))
   })
 
+  // 자동 스크롤 기능
   useEffect(() => {
-    if (scrollAreaRef.current) {
-      const viewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]')
-      if (viewport) {
-        viewport.scrollTop = viewport.scrollHeight
+    const scrollToBottom = () => {
+      if (scrollAreaRef.current) {
+        const viewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]')
+        if (viewport) {
+          // 부드러운 스크롤
+          viewport.scrollTo({
+            top: viewport.scrollHeight,
+            behavior: 'smooth'
+          })
+        }
       }
     }
+
+    // 약간의 지연을 주어 DOM 업데이트 완료 후 스크롤
+    const timeoutId = setTimeout(scrollToBottom, 100)
+
+    return () => clearTimeout(timeoutId)
   }, [messages])
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full overflow-hidden">
       <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
         <div className="max-w-4xl mx-auto space-y-4">
           {messages.map((message) => (

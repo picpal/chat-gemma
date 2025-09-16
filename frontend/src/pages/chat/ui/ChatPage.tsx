@@ -5,7 +5,7 @@ import { useChatContext } from "@/shared/lib/contexts/ChatContext"
 import { useAuth } from "@/shared/lib/contexts/AuthContext"
 
 export function ChatPage() {
-  const { currentChatId, chats, getCurrentMessages, sendMessage, isConnected } = useChatContext()
+  const { currentChatId, chats, getCurrentMessages, sendMessage, isConnected, isAiResponding } = useChatContext()
   const { user } = useAuth()
 
   const messages = getCurrentMessages()
@@ -66,7 +66,7 @@ export function ChatPage() {
         </div>
 
         {/* Message Thread */}
-        <div className="flex-1">
+        <div className="flex-1 overflow-hidden">
           <MessageThread
             messages={messages}
             isLoading={false}
@@ -78,7 +78,14 @@ export function ChatPage() {
         <ChatInput
           onSendMessage={handleSendMessage}
           disabled={!isConnected}
-          placeholder={isConnected ? "메시지를 입력하세요..." : "WebSocket 연결 대기 중..."}
+          isAiResponding={isAiResponding}
+          placeholder={
+            !isConnected
+              ? "WebSocket 연결 대기 중..."
+              : isAiResponding
+                ? "AI가 응답 중입니다..."
+                : "메시지를 입력하세요..."
+          }
         />
       </div>
     </div>

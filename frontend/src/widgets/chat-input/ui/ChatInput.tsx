@@ -1,4 +1,4 @@
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Button } from "@/shared/ui/button"
 import { Card } from "@/shared/ui/card"
 import { Paperclip, Send, X } from "lucide-react"
@@ -7,12 +7,14 @@ import { cn } from "@/shared/lib/utils"
 interface ChatInputProps {
   onSendMessage?: (content: string, image?: File) => void
   disabled?: boolean
+  isAiResponding?: boolean
   placeholder?: string
 }
 
 export function ChatInput({
   onSendMessage,
   disabled = false,
+  isAiResponding = false,
   placeholder = "메시지를 입력하세요...",
 }: ChatInputProps) {
   const [message, setMessage] = useState("")
@@ -22,6 +24,7 @@ export function ChatInput({
   const [isSending, setIsSending] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [shouldFocus, setShouldFocus] = useState(false)
 
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -43,7 +46,7 @@ export function ChatInput({
 
   const handleSend = () => {
     if (!message.trim() && !selectedImage) return
-    if (disabled || isSending || isComposing) return
+    if (disabled || isSending || isComposing || isAiResponding) return
 
     setIsSending(true)
 
@@ -60,14 +63,19 @@ export function ChatInput({
       if (textareaRef.current) {
         textareaRef.current.style.height = 'auto'
       }
+
+      // 포커스 트리거 설정
+      setShouldFocus(true)
     } finally {
-      // 짧은 지연 후 전송 상태 해제 (중복 방지)
-      setTimeout(() => setIsSending(false), 100)
+      // 전송 상태 해제
+      setTimeout(() => {
+        setIsSending(false)
+      }, 100)
     }
   }
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter' && !event.shiftKey && !event.repeat && !isComposing && !isSending) {
+    if (event.key === 'Enter' && !event.shiftKey && !event.repeat && !isComposing && !isSending && !isAiResponding) {
       event.preventDefault()
       handleSend()
     }
@@ -89,6 +97,28 @@ export function ChatInput({
     textarea.style.height = 'auto'
     textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px'
   }
+
+  // 포커스 트리거에 대한 useEffect
+  useEffect(() => {
+    if (shouldFocus && textareaRef.current && !disabled && !isSending) {
+      const focusTextarea = () => {
+        if (textareaRef.current) {
+          textareaRef.current.focus()
+          // 커서를 텍스트 끝으로 이동
+          textareaRef.current.selectionStart = textareaRef.current.value.length
+          textareaRef.current.selectionEnd = textareaRef.current.value.length
+        }
+        setShouldFocus(false)
+      }
+
+      // 여러 방법으로 포커스 시도
+      requestAnimationFrame(() => {
+        focusTextarea()
+        // 추가 보장을 위한 지연된 포커스
+        setTimeout(focusTextarea, 50)
+      })
+    }
+  }, [shouldFocus, disabled, isSending])
 
   return (
     <div className="p-4 bg-background">
@@ -135,10 +165,16 @@ export function ChatInput({
               variant="ghost"
               size="icon"
               onClick={() => fileInputRef.current?.click()}
-              disabled={disabled}
-              className="h-10 w-10 flex-shrink-0"
+              disabled={disabled || isAiResponding}
+              className={cn(
+                "h-10 w-10 flex-shrink-0",
+                (disabled || isAiResponding) && "opacity-50 cursor-not-allowed"
+              )}
             >
-              <Paperclip className="h-4 w-4" />
+              <Paperclip className={cn(
+                "h-4 w-4",
+                (disabled || isAiResponding) && "text-muted-foreground"
+              )} />
             </Button>
 
             <div className="flex-1">
@@ -154,7 +190,8 @@ export function ChatInput({
                 className={cn(
                   "w-full resize-none border-0 bg-transparent p-0 text-sm focus:outline-none focus:ring-0",
                   "placeholder:text-muted-foreground",
-                  "min-h-[24px] max-h-[120px]"
+                  "min-h-[24px] max-h-[120px]",
+                  disabled && "cursor-not-allowed opacity-50"
                 )}
                 rows={1}
               />
@@ -162,11 +199,17 @@ export function ChatInput({
 
             <Button
               onClick={handleSend}
-              disabled={disabled || isSending || (!message.trim() && !selectedImage)}
+              disabled={disabled || isSending || isAiResponding || (!message.trim() && !selectedImage)}
               size="icon"
-              className="h-10 w-10 flex-shrink-0"
+              className={cn(
+                "h-10 w-10 flex-shrink-0",
+                (disabled || isSending || isAiResponding || (!message.trim() && !selectedImage)) && "opacity-50"
+              )}
             >
-              <Send className="h-4 w-4" />
+              <Send className={cn(
+                "h-4 w-4",
+                (disabled || isSending || isAiResponding) && "text-muted-foreground"
+              )} />
             </Button>
           </div>
         </Card>

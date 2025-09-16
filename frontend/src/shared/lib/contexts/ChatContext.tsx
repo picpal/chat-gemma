@@ -11,6 +11,7 @@ interface ChatContextType {
   sidebarCollapsed: boolean
   messages: Record<number, Message[]>
   isConnected: boolean
+  isAiResponding: boolean
 
   // Actions
   setCurrentChatId: (id: number | null) => void
@@ -44,6 +45,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const [messages, setMessages] = useState<Record<number, Message[]>>({})
   const [isConnected, setIsConnected] = useState(false)
   const [isSending, setIsSending] = useState(false)
+  const [isAiResponding, setIsAiResponding] = useState(false)
 
   // WebSocket 연결 초기화
   useEffect(() => {
@@ -121,6 +123,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
                 ...existingMessage,
                 isStreaming: false // 스트리밍 완료 표시
               }
+              setIsAiResponding(false) // AI 응답 완료
             } else {
               // 일반적인 청크 누적
               updatedMessages[existingMessageIndex] = {
@@ -128,6 +131,9 @@ export function ChatProvider({ children }: { children: ReactNode }) {
                 content: existingMessage.content + message.content,
                 isStreaming: message.isStreaming,
                 timestamp: message.timestamp
+              }
+              if (!isAiResponding) {
+                setIsAiResponding(true) // AI 응답 시작
               }
             }
 
@@ -141,6 +147,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
             // 새로운 AI 응답 시작
             console.log('🆕 [ChatContext] Creating new AI message with ID:', message.id)
             const newMessage = { ...message, isStreaming: true }
+            setIsAiResponding(true) // AI 응답 시작
 
             return {
               ...prev,
@@ -334,6 +341,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     sidebarCollapsed,
     messages,
     isConnected,
+    isAiResponding,
     setCurrentChatId,
     createNewChat,
     deleteChat,
