@@ -2222,3 +2222,6 @@ Caused by: org.h2.mvstore.MVStoreException: The file is locked: /Users/picpal/De
 	at org.h2.mvstore.SingleFileStore.open(SingleFileStore.java:81)
 	at org.h2.mvstore.MVStore.<init>(MVStore.java:286)
 	... 63 more
+2025-09-17 22:06:43.401893+09:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "delete [*]* FROM MESSAGES where CHAT_ID = '1'"; expected "identifier"; SQL statement:
+delete * FROM MESSAGES where CHAT_ID = '1' [42001-232]

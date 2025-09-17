@@ -32,6 +32,9 @@ public class Message {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(nullable = true)
+    private Boolean excludeFromContext;
+
     protected Message() {
         // JPA를 위한 기본 생성자
     }
@@ -48,6 +51,7 @@ public class Message {
         this.content = content;
         this.imageUrl = imageUrl;
         this.createdAt = LocalDateTime.now();
+        this.excludeFromContext = false;
     }
 
     public static Message createUserMessage(Long chatId, String content) {
@@ -73,6 +77,14 @@ public class Message {
 
     public boolean isAssistantMessage() {
         return role == Role.ASSISTANT;
+    }
+
+    public void excludeFromContext() {
+        this.excludeFromContext = true;
+    }
+
+    public boolean isExcludedFromContext() {
+        return this.excludeFromContext != null && this.excludeFromContext;
     }
 
     private static void validateRequired(Long value, String message) {
@@ -119,6 +131,10 @@ public class Message {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public Boolean getExcludeFromContext() {
+        return excludeFromContext;
     }
 
     // Enums

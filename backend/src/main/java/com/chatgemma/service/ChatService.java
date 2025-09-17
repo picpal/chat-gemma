@@ -80,11 +80,21 @@ public class ChatService {
     @Transactional
     public void deleteChat(Long chatId, Long userId, String clientIp, String userAgent) {
         Chat chat = getChatByIdAndUserId(chatId, userId);
-        chat.softDelete();
-        chatRepository.save(chat);
 
-        // 감사 로그 기록
-        recordAuditLog(userId, "DELETE_CHAT", "CHAT", chatId, clientIp, userAgent, null);
+        // 1. 먼저 감사 로그 기록 (채팅 정보가 남아있을 때)
+        recordAuditLog(userId, "DELETE_CHAT", "CHAT", chatId, clientIp, userAgent,
+                "{\"title\":\"" + chat.getTitle() + "\"}");
+
+        // 2. 해당 채팅의 모든 메시지 물리적 삭제
+        List<Message> messages = messageRepository.findByChatIdOrderByCreatedAtAsc(chatId);
+        if (!messages.isEmpty()) {
+            messageRepository.deleteAll(messages);
+            logger.info("✅ Deleted {} messages for chatId: {}", messages.size(), chatId);
+        }
+
+        // 3. 채팅 자체를 물리적 삭제
+        chatRepository.delete(chat);
+        logger.info("✅ Deleted chat: {}", chatId);
     }
 
     @Transactional
@@ -106,8 +116,21 @@ public class ChatService {
         Message savedUserMessage = messageRepository.save(userMessage);
 
         try {
-            // AI 응답 요청
-            String aiResponse = ollamaService.sendMessage(content, imageUrl);
+            // 최근 대화 히스토리 가져오기 (컨텍스트에서 제외되지 않은 메시지만, 80% 토큰 사용을 위해 최대 70개)
+            List<Message> recentMessages = messageRepository.findByChatIdAndExcludeFromContextFalseOrderByCreatedAtDesc(chatId)
+                .stream()
+                .filter(msg -> !msg.getId().equals(savedUserMessage.getId())) // 방금 저장한 사용자 메시지 제외
+                .limit(70)
+                .sorted((m1, m2) -> m1.getCreatedAt().compareTo(m2.getCreatedAt()))
+                .toList();
+
+            // AI 응답 요청 (컨텍스트 포함)
+            String aiResponse = ollamaService.sendMessageWithContext(content, imageUrl, recentMessages);
+
+            // 대화 초기화 요청인 경우 이전 메시지들을 컨텍스트에서 제외
+            if (isContextResetRequest(content)) {
+                excludePreviousMessagesFromContext(chatId, savedUserMessage.getId());
+            }
 
             // AI 응답 메시지 저장
             Message aiMessage = Message.createAssistantMessage(chatId, aiResponse);
@@ -177,16 +200,23 @@ public class ChatService {
                 // AI 응답을 누적할 StringBuilder
                 StringBuilder fullResponse = new StringBuilder();
 
-                // OllamaServiceImpl을 사용한 실제 AI 스트리밍
+                // 최근 대화 히스토리 가져오기 (컨텍스트에서 제외되지 않은 메시지만, 80% 토큰 사용을 위해 최대 70개)
+                List<Message> recentMessages = messageRepository.findByChatIdAndExcludeFromContextFalseOrderByCreatedAtDesc(chatId)
+                    .stream()
+                    .limit(70)
+                    .sorted((m1, m2) -> m1.getCreatedAt().compareTo(m2.getCreatedAt()))
+                    .toList();
+
+                // OllamaServiceImpl을 사용한 실제 AI 스트리밍 (컨텍스트 포함)
                 if (ollamaService instanceof OllamaServiceImpl) {
                     OllamaServiceImpl ollamaImpl = (OllamaServiceImpl) ollamaService;
-                    ollamaImpl.sendMessageStream(request.getContent(), request.getImageUrl(), chunk -> {
+                    ollamaImpl.sendMessageStreamWithContext(request.getContent(), request.getImageUrl(), recentMessages, chunk -> {
                         fullResponse.append(chunk);
                         chunkConsumer.accept(chunk);
                     });
                 } else {
                     // 기본 구현체를 사용하는 경우 (fallback)
-                    String response = ollamaService.sendMessage(request.getContent(), request.getImageUrl());
+                    String response = ollamaService.sendMessageWithContext(request.getContent(), request.getImageUrl(), recentMessages);
                     String[] words = response.split("\\s+");
                     for (int i = 0; i < words.length; i++) {
                         String word = words[i];
@@ -248,5 +278,46 @@ public class ChatService {
             auditLog = AuditLog.create(userId, action, resourceType, resourceId, ipAddress, userAgent);
         }
         auditLogRepository.save(auditLog);
+    }
+
+    // 대화 초기화 키워드 감지 (OllamaServiceImpl과 동일한 로직)
+    private boolean isContextResetRequest(String message) {
+        if (message == null) return false;
+
+        String normalizedMessage = message.toLowerCase().trim();
+
+        String[] resetKeywords = {
+            "이전 대화 잊어버려", "이전 대화 잊어", "대화 잊어버려",
+            "대화 내용 초기화", "대화 초기화", "컨텍스트 초기화",
+            "새로 시작해", "새로 시작하자", "처음부터 시작",
+            "리셋", "reset", "clear",
+            "기억 지워", "기억 삭제", "잊어버려",
+            "대화 지워", "히스토리 삭제", "이전 내용 삭제"
+        };
+
+        for (String keyword : resetKeywords) {
+            if (normalizedMessage.contains(keyword.toLowerCase())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // 이전 메시지들을 컨텍스트에서 제외
+    @Transactional
+    public void excludePreviousMessagesFromContext(Long chatId, Long currentMessageId) {
+        List<Message> previousMessages = messageRepository.findByChatIdOrderByCreatedAtDesc(chatId)
+            .stream()
+            .filter(msg -> !msg.getId().equals(currentMessageId)) // 현재 메시지 제외
+            .toList();
+
+        for (Message message : previousMessages) {
+            message.excludeFromContext();
+            messageRepository.save(message);
+        }
+
+        logger.info("✅ Excluded {} previous messages from context for chatId: {}",
+                   previousMessages.size(), chatId);
     }
 }

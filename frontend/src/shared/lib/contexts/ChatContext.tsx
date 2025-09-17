@@ -72,6 +72,9 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!currentChatId) return
 
+    // 채팅방 변경 시 이전 채팅의 AI 응답 상태 정리
+    console.log('🔄 [ChatContext] Chat changed, cleaning up AI states for chat:', currentChatId)
+
     const loadChatMessages = async () => {
       try {
         console.log('📚 [ChatContext] Loading chat messages for chatId:', currentChatId)
@@ -92,6 +95,16 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           ...prev,
           [currentChatId]: loadedMessages
         }))
+
+        // 로드된 메시지 중에 완료되지 않은 AI 응답이 있는지 확인
+        const hasIncompleteAiResponse = loadedMessages.some(msg =>
+          msg.role === 'ASSISTANT' && msg.isStreaming
+        )
+
+        // 완료되지 않은 AI 응답이 없으면 상태 정리
+        if (!hasIncompleteAiResponse) {
+          setAiRespondingChats(prev => ({ ...prev, [currentChatId]: false }))
+        }
 
         console.log('✅ [ChatContext] Loaded', loadedMessages.length, 'messages for chat:', currentChatId)
       } catch (error) {
@@ -166,8 +179,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
                 isStreaming: message.isStreaming,
                 timestamp: message.timestamp
               }
-              // AI 응답이 시작되면 로딩 상태 즉시 해제
-              if (aiRespondingChats[currentChatId]) {
+
+              // AI 응답 완료 처리 (여러 조건으로 체크)
+              if (!message.isStreaming || message.content === '') {
+                console.log('🏁 [ChatContext] AI response completed via isStreaming=false')
                 setAiRespondingChats(prev => ({ ...prev, [currentChatId]: false }))
               }
             }
