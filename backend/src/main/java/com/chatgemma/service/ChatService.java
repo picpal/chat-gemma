@@ -7,6 +7,8 @@ import com.chatgemma.repository.AuditLogRepository;
 import com.chatgemma.repository.ChatRepository;
 import com.chatgemma.repository.MessageRepository;
 import com.chatgemma.service.exception.ChatNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,8 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 public class ChatService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ChatService.class);
 
     private final ChatRepository chatRepository;
     private final MessageRepository messageRepository;
@@ -155,18 +159,31 @@ public class ChatService {
         }
     }
 
-    // WebSocket용 스트리밍 메시지 처리
-    @Transactional
+    // WebSocket용 스트리밍 메시지 처리 (사용자 메시지와 AI 응답 모두 저장)
     public java.util.concurrent.CompletableFuture<Void> processMessageStreamAsync(
             com.chatgemma.dto.request.ChatMessageRequest request,
             String sessionId,
+            Long userId,
             java.util.function.Consumer<String> chunkConsumer) {
+
+        // 1. 먼저 사용자 메시지를 동기적으로 저장
+        Long chatId = Long.parseLong(request.getChatId());
+        saveUserMessage(chatId, userId, request.getContent(), request.getImageUrl());
+        logger.info("✅ User message saved to DB: chatId={}, content={}", chatId, request.getContent());
+
+        // 2. AI 응답을 비동기적으로 처리하고 저장
         return java.util.concurrent.CompletableFuture.runAsync(() -> {
             try {
+                // AI 응답을 누적할 StringBuilder
+                StringBuilder fullResponse = new StringBuilder();
+
                 // OllamaServiceImpl을 사용한 실제 AI 스트리밍
                 if (ollamaService instanceof OllamaServiceImpl) {
                     OllamaServiceImpl ollamaImpl = (OllamaServiceImpl) ollamaService;
-                    ollamaImpl.sendMessageStream(request.getContent(), request.getImageUrl(), chunkConsumer);
+                    ollamaImpl.sendMessageStream(request.getContent(), request.getImageUrl(), chunk -> {
+                        fullResponse.append(chunk);
+                        chunkConsumer.accept(chunk);
+                    });
                 } else {
                     // 기본 구현체를 사용하는 경우 (fallback)
                     String response = ollamaService.sendMessage(request.getContent(), request.getImageUrl());
@@ -175,6 +192,7 @@ public class ChatService {
                         String word = words[i];
                         // 마지막 단어가 아닌 경우에만 공백 추가
                         String chunk = (i == words.length - 1) ? word : word + " ";
+                        fullResponse.append(chunk);
                         chunkConsumer.accept(chunk);
                         try {
                             Thread.sleep(100);
@@ -185,12 +203,39 @@ public class ChatService {
                     }
                 }
 
-                // TODO: 실제 AI 응답을 DB에 저장하는 로직 추가
+                // AI 응답을 DB에 저장
+                if (fullResponse.length() > 0) {
+                    saveAssistantMessage(chatId, fullResponse.toString());
+                    logger.info("✅ AI response saved to DB: chatId={}, responseLength={}", chatId, fullResponse.length());
+                }
 
             } catch (Exception e) {
+                logger.error("❌ Error processing AI response", e);
                 chunkConsumer.accept("오류가 발생했습니다: " + e.getMessage());
             }
         });
+    }
+
+    // 사용자 메시지 저장 헬퍼 메서드
+    @Transactional
+    public Message saveUserMessage(Long chatId, Long userId, String content, String imageUrl) {
+        // 채팅 권한 확인
+        getChatByIdAndUserId(chatId, userId);
+
+        Message userMessage;
+        if (imageUrl != null && !imageUrl.trim().isEmpty()) {
+            userMessage = Message.createUserMessageWithImage(chatId, content, imageUrl);
+        } else {
+            userMessage = Message.createUserMessage(chatId, content);
+        }
+        return messageRepository.save(userMessage);
+    }
+
+    // AI 응답 저장 헬퍼 메서드
+    @Transactional
+    public Message saveAssistantMessage(Long chatId, String content) {
+        Message aiMessage = Message.createAssistantMessage(chatId, content);
+        return messageRepository.save(aiMessage);
     }
 
     private void recordAuditLog(Long userId, String action, String resourceType, Long resourceId,

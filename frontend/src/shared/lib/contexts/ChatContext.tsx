@@ -45,7 +45,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const [messages, setMessages] = useState<Record<number, Message[]>>({})
   const [isConnected, setIsConnected] = useState(false)
   const [isSending, setIsSending] = useState(false)
-  const [isAiResponding, setIsAiResponding] = useState(false)
+  const [aiRespondingChats, setAiRespondingChats] = useState<Record<number, boolean>>({})
 
   // WebSocket 연결 초기화
   useEffect(() => {
@@ -68,7 +68,41 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  // 현재 채팅 변경 시 구독 설정
+  // 현재 채팅 변경 시 메시지 히스토리 로드
+  useEffect(() => {
+    if (!currentChatId) return
+
+    const loadChatMessages = async () => {
+      try {
+        console.log('📚 [ChatContext] Loading chat messages for chatId:', currentChatId)
+        const messageDataList = await chatApi.getChatMessages(currentChatId)
+
+        // MessageData를 Message 타입으로 변환
+        const loadedMessages: Message[] = messageDataList.map(msgData => ({
+          id: msgData.id.toString(),
+          content: msgData.content,
+          role: msgData.role,
+          timestamp: msgData.createdAt,
+          imageUrl: msgData.imageUrl,
+          isStreaming: false,
+          isError: false
+        }))
+
+        setMessages(prev => ({
+          ...prev,
+          [currentChatId]: loadedMessages
+        }))
+
+        console.log('✅ [ChatContext] Loaded', loadedMessages.length, 'messages for chat:', currentChatId)
+      } catch (error) {
+        console.error('❌ [ChatContext] Failed to load chat messages:', error)
+      }
+    }
+
+    loadChatMessages()
+  }, [currentChatId])
+
+  // WebSocket 구독 설정
   useEffect(() => {
     if (!currentChatId || !isConnected) return
 
@@ -123,7 +157,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
                 ...existingMessage,
                 isStreaming: false // 스트리밍 완료 표시
               }
-              setIsAiResponding(false) // AI 응답 완료
+              setAiRespondingChats(prev => ({ ...prev, [currentChatId]: false })) // AI 응답 완료
             } else {
               // 일반적인 청크 누적
               updatedMessages[existingMessageIndex] = {
@@ -133,8 +167,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
                 timestamp: message.timestamp
               }
               // AI 응답이 시작되면 로딩 상태 즉시 해제
-              if (isAiResponding) {
-                setIsAiResponding(false)
+              if (aiRespondingChats[currentChatId]) {
+                setAiRespondingChats(prev => ({ ...prev, [currentChatId]: false }))
               }
             }
 
@@ -148,7 +182,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
             // 새로운 AI 응답 시작
             console.log('🆕 [ChatContext] Creating new AI message with ID:', message.id)
             const newMessage = { ...message, isStreaming: true }
-            setIsAiResponding(false) // AI 응답 시작 시 로딩 상태 즉시 해제
+            setAiRespondingChats(prev => ({ ...prev, [currentChatId]: false })) // AI 응답 시작 시 로딩 상태 즉시 해제
 
             return {
               ...prev,
@@ -184,7 +218,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     webSocketService.joinChat(currentChatId)
 
     return unsubscribe
-  }, [currentChatId, isConnected])
+  }, [currentChatId, isConnected, aiRespondingChats])
 
   const createNewChat = async () => {
     try {
@@ -277,11 +311,11 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
     try {
       webSocketService.sendMessage(request)
-      setIsAiResponding(true) // AI 응답 시작
+      setAiRespondingChats(prev => ({ ...prev, [currentChatId]: true })) // AI 응답 시작
       console.log('✅ [ChatContext] Message sent successfully via WebSocket')
     } catch (error) {
       console.error('❌ [ChatContext] Failed to send message:', error)
-      setIsAiResponding(false) // 오류 시 AI 응답 상태 해제
+      setAiRespondingChats(prev => ({ ...prev, [currentChatId]: false })) // 오류 시 AI 응답 상태 해제
       // 오류 시 사용자 메시지에 오류 표시
       setMessages(prev => {
         const currentMessages = prev[currentChatId] || []
@@ -344,7 +378,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     sidebarCollapsed,
     messages,
     isConnected,
-    isAiResponding,
+    isAiResponding: currentChatId ? (aiRespondingChats[currentChatId] || false) : false,
     setCurrentChatId,
     createNewChat,
     deleteChat,

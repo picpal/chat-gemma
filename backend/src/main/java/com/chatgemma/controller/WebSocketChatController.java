@@ -39,16 +39,17 @@ public class WebSocketChatController {
 
         try {
             // 임시로 principal 없어도 처리하도록 수정
+            Long userId = 1L; // TODO: 실제 사용자 ID는 세션에서 가져와야 함
             if (principal == null) {
-                logger.warn("⚠️ No authenticated user, proceeding with anonymous processing");
+                logger.warn("⚠️ No authenticated user, using default userId=1");
             }
 
-            // 사용자 메시지는 프론트엔드에서 이미 표시하므로, 여기서는 AI 응답만 처리
-            logger.info("🤖 Processing AI response for message: {}", request.getContent());
+            // 사용자 메시지와 AI 응답을 모두 처리하고 저장
+            logger.info("💾 Saving user message and processing AI response");
 
             // AI 응답을 스트리밍으로 전송 (비동기)
             String aiMessageId = System.currentTimeMillis() + "_ai";
-            chatService.processMessageStreamAsync(request, sessionId, (chunk) -> {
+            chatService.processMessageStreamAsync(request, sessionId, userId, (chunk) -> {
                 ChatMessageResponse aiChunk = ChatMessageResponse.builder()
                     .id(aiMessageId)
                     .chatId(request.getChatId())
